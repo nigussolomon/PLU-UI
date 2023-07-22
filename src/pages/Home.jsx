@@ -186,19 +186,14 @@ export default function Home({ source, setSource }) {
         <div
           className="fields"
           style={{
-            width: "70%",
+            width: "54%",
             display: "flex",
             justifyContent: "space-between",
           }}
         >
           <TextField
-            style={{ width: "24%" }}
-            label="Search"
-            variant="outlined"
-          />
-          <TextField
             select
-            style={{ width: "24%" }}
+            style={{ width: "30%" }}
             label="Supplier"
             variant="outlined"
           >
@@ -210,7 +205,7 @@ export default function Home({ source, setSource }) {
           </TextField>
           <TextField
             select
-            style={{ width: "24%" }}
+            style={{ width: "30%" }}
             label="Status"
             variant="outlined"
           >
@@ -221,7 +216,7 @@ export default function Home({ source, setSource }) {
           </TextField>
           <TextField
             select
-            style={{ width: "24%" }}
+            style={{ width: "30%" }}
             label="Source"
             variant="outlined"
           >
