@@ -1,24 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import Login from './pages/Login.jsx'
+import Home from './pages/Home.jsx'
+import PathSelector from './pages/PathSelector.jsx'
+import Master from './pages/Master.jsx'
+import Customer from './pages/Customer.jsx'
+import NewItem from './pages/NewItem.jsx'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login/>}/>
+        <Route path="/ps" element={<PathSelector/>}/>
+        <Route path="/home" element={<Home/>}/>
+        <Route path="/master" element={<Master/>}/>
+        <Route path="/customer" element={<Customer/>}/>
+        <Route path="/newitem" element={<NewItem/>}/>
+      </Routes>
+    </Router>
   );
 }
 
