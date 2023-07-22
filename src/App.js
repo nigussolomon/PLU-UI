@@ -9,14 +9,16 @@ import PathSelector from './pages/PathSelector.jsx'
 import Master from './pages/Master.jsx'
 import Customer from './pages/Customer.jsx'
 import NewItem from './pages/NewItem.jsx'
+import React from 'react';
 
 function App() {
+  const [source, setSource] = React.useState("")
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Login/>}/>
-        <Route path="/ps" element={<PathSelector/>}/>
-        <Route path="/home" element={<Home/>}/>
+        <Route path="/ps" element={<PathSelector source={source} setSource={setSource} />}/>
+        <Route path="/home" element={<Home source={source} setSource={setSource} />}/>
         <Route path="/master" element={<Master/>}/>
         <Route path="/customer" element={<Customer/>}/>
         <Route path="/newitem" element={<NewItem/>}/>

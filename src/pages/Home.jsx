@@ -3,24 +3,15 @@ import NavBar from "../components/NavBar.jsx";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
-import DialogTitle from "@mui/material/DialogTitle";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import Slide from "@mui/material/Slide";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import Inventory2Icon from "@mui/icons-material/Inventory2";
 import Typography from "@mui/material/Typography";
 import { DataGrid } from "@mui/x-data-grid";
-import DialogActions from "@mui/material/DialogActions";
 import MenuItem from "@mui/material/MenuItem";
 import { rows, rows2 } from "../mock/Data";
-import * as XLSX from "xlsx";
+import DataSourceDialog from "../components/dialogs/dataSource";
+import Details from "../components/dialogs/details";
+import UploadedData from "../components/dialogs/uploadedData";
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-
-export default function Home({ source }) {
+export default function Home({ source, setSource }) {
   const [open, setOpen] = React.useState(false);
   const [open1, setOpen1] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
@@ -51,58 +42,11 @@ export default function Home({ source }) {
     setFileData([]);
     setFileDataHead([]);
     setFiles([]);
+    window.location.reload(false);
   };
 
   const handleClickOpen1 = () => {
     setOpen1(true);
-  };
-
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    await setFiles(file);
-    const reader = new FileReader();
-    console.log(files);
-    reader.onload = async (event) => {
-      const binaryString = await event.target.result;
-      const workbook = await XLSX.read(binaryString, { type: "binary" });
-      const sheetName = await workbook.SheetNames[0];
-      const worksheet = await workbook.Sheets[sheetName];
-      const data = await XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-      const columnsToDisplay = [1, 3, 6, 12, 10, 11, 12, 13];
-      const limitedData = await data.map((row) =>
-        columnsToDisplay.map((colIndex) => row[colIndex])
-      );
-
-      // Add 'id' property to each item in 'limitedData'
-      const limitedDataWithId = await limitedData.map((row, index) => ({
-        id: index + 1, // You can use any other unique identifier here
-        data: row,
-      }));
-
-      const mycolumns = await limitedDataWithId[0].data.map(
-        (header, index) => ({
-          field: `col${index}`,
-          headerName: header,
-          width: 230, // You can adjust the width as needed
-        })
-      );
-
-      setFileDataHead(mycolumns);
-
-      const transformedFileData = limitedDataWithId.slice(1).map((row) => ({
-        id: row.id,
-        ...Object.fromEntries(
-          row.data.map((val, index) => [`col${index}`, val])
-        ),
-      }));
-
-      setFileData(transformedFileData);
-      setFileDataHead(mycolumns);
-    };
-    reader.onerror = (event) => {
-      console.error("Error reading file:", event.target.error);
-    };
-    reader.readAsBinaryString(file);
   };
 
   const columns = [
@@ -184,272 +128,53 @@ export default function Home({ source }) {
   };
 
   return (
-    <div className="home" style={{width: "95vw", marginLeft: "3.5vw", marginTop: "8vh"}}>
-      <Dialog
+    <div
+      className="home"
+      style={{ width: "95vw", marginLeft: "3.5vw", marginTop: "8vh" }}
+    >
+      <DataSourceDialog
         open={open}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={handleClose}
-        sx={{ height: "25vh", width: "100vw", overflow: "hidden" }}
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <DialogTitle style={{ textAlign: "center" }}>
-          {"Choose Data Source"}
-        </DialogTitle>
-        <DialogContent style={{ width: "25vw" }}>
-          <div
-            className="pathSelect"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <div>
-              <input
-                id="upload-input"
-                className="upload-input"
-                type="file"
-                accept=".xlsx, .xls"
-                style={{ display: "none" }}
-                onChange={handleFileUpload}
-              />
-              <label htmlFor="upload-input">
-                <Button
-                  onClick={() => {
-                    handleClickOpen2();
-                  }}
-                  component="span"
-                  startIcon={<CloudUploadIcon />}
-                  style={{
-                    padding: "3%",
-                    margin: "1%",
-                    background: "#04184B",
-                    color: "white",
-                    borderRadius: "5px",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    cursor: "pointer",
-                    "&:hover": {
-                      background: "#08327B",
-                    },
-                  }}
-                >
-                  Upload File
-                </Button>
-              </label>
-            </div>
-            <div
-              className="path"
-              style={{
-                padding: "3%",
-                margin: "1%",
-                background: "#04184B",
-                color: "white",
-                borderRadius: "5px",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                width: "25%",
-                cursor: "pointer",
-              }}
-            >
-              <Inventory2Icon />
-              API SOURCE
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-      <Dialog
-        open={open1}
-        TransitionComponent={Transition}
-        keepMounted
-        fullScreen
-        sx={{
-          height: "fit-content",
-          width: "100%",
-          minWidth: "100vh",
-          overflow: "hidden",
-        }}
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <DialogTitle
-          style={{ fontSize: "30px", textAlign: "left", fontWeight: 900 }}
-        >
-          <div
-            className="title"
-            style={{ display: "flex", flexDirection: "column" }}
-          >
-            <span style={{ fontSize: "35px", fontWeight: 300 }}>
-              {supplier}
-            </span>
-            <span
-              style={{ fontSize: "25px", fontWeight: 700, lineHeight: 0.8 }}
-            >
-              {curRef}
-            </span>
-            <span
-              style={{ fontSize: "15px", fontWeight: 300, lineHeight: 1.3 }}
-            >
-              {date}
-            </span>
-          </div>
-        </DialogTitle>
-        <DialogContent style={{ width: "97.5vw", minWidth: "97.5vw" }}>
-          <DataGrid
-            sx={{
-              "& .MuiDataGrid-columnHeaders": {
-                backgroundColor: "#04184B",
-                color: "white",
-                cursor: "pointer",
-                stroke: "white",
-                minWidth: "100vw",
-              },
-            }}
-            rows={dummyRow}
-            columns={columns2.map((column) => ({
-              ...column,
-              cellClassName: (params) =>
-                getCellStyles(params) ? "price-per-pc" : "",
-              cellStyle: getCellStyles,
-            }))}
-            initialState={{
-              pagination: {
-                paginationModel: { page: 0, pageSize: 10 },
-              },
-            }}
-            pageSizeOptions={[5, 10, 15, 20, 25]}
-          />
-          <DialogActions>
-            <Button
-              style={{ padding: ".5%", paddingInline: "2.5%" }}
-              color="error"
-              variant="outlined"
-              onClick={handleClose1}
-            >
-              CLOSE
-            </Button>
-            {status === "Drafted" ? (
-              <Button
-                style={{ padding: ".5%", paddingInline: "2.5%" }}
-                color="success"
-                variant="contained"
-                onClick={handleClose1}
-              >
-                APPROVE & UPDATE
-              </Button>
-            ) : (
-              <>
-                <Button
-                  disabled={disabled}
-                  style={{ padding: ".5%", paddingInline: "2.5%" }}
-                  color="success"
-                  variant="contained"
-                  onClick={handleClose1}
-                >
-                  ACCEPT & RECORD
-                </Button>
-                <Button
-                  style={{ padding: ".5%", paddingInline: "2.5%" }}
-                  color="secondary"
-                  variant="contained"
-                  onClick={() => {
-                    const test = () => {
-                      rows2.forEach((element) => {
-                        element["currency"] = "EUR";
-                        element["price_per_pc"] = element["price_per_pc"] * 1.1;
-                      });
+        handleClose={handleClose}
+        files={files}
+        setFiles={setFiles}
+        setFileData={setFileData}
+        setFileDataHead={setFileDataHead}
+        handleClickOpen2={handleClickOpen2}
+      />
+      <Details
+        open1={open1}
+        curRef={curRef}
+        supplier={supplier}
+        date={date}
+        dummyRow={dummyRow}
+        columns2={columns2}
+        status={status}
+        handleClose1={handleClose1}
+        disabled={disabled}
+        getCellStyles={getCellStyles}
+        setDisabled={setDisabled}
+        setDummyRow={setDummyRow}
+      />
+      <UploadedData
+        open2={open2}
+        handleClose2={handleClose2}
+        getCellStyles={getCellStyles}
+        fileData={fileData}
+        fileDataHead={fileDataHead}
+      />
 
-                      return rows2;
-                    };
-                    setDummyRow(test);
-                    setDisabled(false);
-                  }}
-                >
-                  CONVERT CURRENCY
-                </Button>
-              </>
-            )}
-            <Button
-              style={{ padding: ".5%", paddingInline: "2.5%" }}
-              color="error"
-              variant="contained"
-            >
-              ARCHIVE
-            </Button>
-          </DialogActions>
-        </DialogContent>
-      </Dialog>
-      <Dialog
-        open={open2}
-        TransitionComponent={Transition}
-        keepMounted
-        fullScreen
-        sx={{
-          height: "fit-content",
-          width: "100%",
-          minWidth: "100vh",
-          overflow: "hidden",
-        }}
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <DialogTitle
-          style={{ fontSize: "30px", textAlign: "left", fontWeight: 900 }}
-        >
-          {curRef}
-        </DialogTitle>
-        <DialogContent style={{ width: "97.5vw", minWidth: "97.5vw" }}>
-          <DataGrid
-            sx={{
-              "& .MuiDataGrid-columnHeaders": {
-                backgroundColor: "#04184B",
-                color: "white",
-                cursor: "pointer",
-                stroke: "white",
-                minWidth: "100vw",
-              },
-            }}
-            rows={fileData}
-            columns={fileDataHead.map((column) => ({
-              ...column,
-              cellClassName: (params) =>
-                getCellStyles(params) ? "price-per-pc" : "",
-              cellStyle: getCellStyles,
-            }))}
-            initialState={{
-              pagination: {
-                paginationModel: { page: 0, pageSize: 10 },
-              },
-            }}
-            pageSizeOptions={[5, 10, 15, 20, 25]}
-          />
-          <DialogActions>
-            <Button
-              style={{ padding: ".5%", paddingInline: "2.5%" }}
-              color="error"
-              variant="outlined"
-              onClick={handleClose2}
-            >
-              CANCEL
-            </Button>
-            <Button
-              style={{ padding: ".5%", paddingInline: "2.5%" }}
-              color="secondary"
-              variant="contained"
-              onClick={() => {
-                handleClose2();
-              }}
-            >
-              SAVE
-            </Button>
-          </DialogActions>
-        </DialogContent>
-      </Dialog>
       <NavBar></NavBar>
-      <Typography style={{ margin: "1%" }} variant="h4">
-        Supplier's Price List Drafts
-      </Typography>
+      <div
+        className="title"
+        style={{ display: "flex", justifyContent: "space-between" }}
+      >
+        <Typography style={{ margin: "1%" }} variant="h4">
+          Price List Drafts
+        </Typography>
+        <Typography style={{ margin: "1%", fontWeight: 900 }} variant="h5">
+          {source}
+        </Typography>
+      </div>
       <div
         className="filters"
         style={{

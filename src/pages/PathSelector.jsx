@@ -2,10 +2,10 @@ import React from "react";
 import FilterFramesIcon from "@mui/icons-material/FilterFrames";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import ApartmentIcon from "@mui/icons-material/Apartment";
-import FiberNewIcon from '@mui/icons-material/FiberNew';
+import FiberNewIcon from "@mui/icons-material/FiberNew";
 import { useNavigate } from "react-router-dom";
 
-export default function PathSelector() {
+export default function PathSelector({source , setSource}) {
   const naviagte = useNavigate();
   return (
     <div
@@ -18,7 +18,10 @@ export default function PathSelector() {
       }}
     >
       <div
-        onClick={() => naviagte("/home")}
+        onClick={() => {
+          setSource("BO API");
+          naviagte("/home");
+        }}
         className="path"
         style={{
           padding: "1%",
@@ -37,7 +40,10 @@ export default function PathSelector() {
         BACK ORDER
       </div>
       <div
-        onClick={() => naviagte("/home")}
+        onClick={() => {
+          setSource("Supplier Catalog");
+          naviagte("/home");
+        }}
         className="path"
         style={{
           padding: "1%",

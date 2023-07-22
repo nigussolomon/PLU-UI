@@ -1,124 +1,3 @@
-// import React from "react";
-// import Typography from "@mui/material/Typography";
-// import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-// import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-// import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-// import { useNavigate } from "react-router-dom";
-// import DialogTitle from "@mui/material/DialogTitle";
-// import Dialog from "@mui/material/Dialog";
-// import DialogContent from "@mui/material/DialogContent";
-// import Divider from '@mui/material/Divider';
-
-// export default function NavBar() {
-//   const navigate = useNavigate();
-//   const [open, setOpen] = React.useState(false);
-
-//   return (
-//     <div
-//       className="navBar"
-//       style={{
-//         display: "flex",
-//         width: "fill",
-//         padding: "1%",
-//         justifyContent: "space-between",
-//         backgroundColor: "#04184B",
-//         color: "white",
-//       }}
-//     >
-// <Dialog
-//   open={open}
-//   keepMounted
-//   onClose={() => {setOpen(false)}}
-//   sx={{ height: "25vh", width: "100vw", overflow: "hidden" }}
-//   aria-describedby="alert-dialog-slide-description"
-// >
-//   <DialogTitle style={{ textAlign: "left" }}>
-//     {"NOTIFICATIONS"}
-//     <Divider style={{marginTop: "8px",}} />
-//   </DialogTitle>
-//   <DialogContent style={{ width: "25vw" }}>
-//     <div
-//       className="pathSelect"
-//       style={{
-//         display: "flex",
-//         justifyContent: "center",
-//         alignItems: "center",
-//       }}
-//     >
-
-//     </div>
-//   </DialogContent>
-// </Dialog>
-//       <div className="logo">
-//         <Typography style={{ fontWeight: 900 }} variant="h5">
-//           MAVEKO
-//         </Typography>
-//       </div>
-//       <div
-//         className="right"
-//         style={{
-//           display: "flex",
-//           width: "30%",
-//           justifyContent: "space-between",
-//         }}
-//       >
-//         <div
-//           className="nav"
-//           style={{
-//             display: "flex",
-//             width: "70%",
-//             alignItems: "center",
-//             justifyContent: "space-evenly",
-//           }}
-//         >
-//           <Typography
-//             onClick={() => navigate("/home")}
-//             style={{ fontWeight: 400, cursor: "pointer" }}
-//             variant="h7"
-//           >
-//             Drafts
-//           </Typography>
-//           <Typography
-//             onClick={() => navigate("/master")}
-//             style={{ fontWeight: 400, cursor: "pointer" }}
-//             variant="h7"
-//           >
-//             Master List
-//           </Typography>
-//           <Typography
-//             onClick={() => navigate("/customer")}
-//             style={{ fontWeight: 400, cursor: "pointer" }}
-//             variant="h7"
-//           >
-//             Customer List
-//           </Typography>
-//           <Typography
-//             style={{ fontWeight: 400, cursor: "pointer" }}
-//             variant="h7"
-//           >
-//             Logs
-//           </Typography>
-//         </div>
-// <div
-//   className="actions"
-//   style={{
-//     display: "flex",
-//     justifyContent: "space-between",
-//     width: "18%",
-//   }}
-// >
-//   <NotificationsNoneIcon style={{ cursor: "pointer" }} onClick={() => setOpen(true)} />
-//   <AccountCircleIcon />
-//   <ExitToAppIcon
-//     onClick={() => navigate("/")}
-//     style={{ color: "red", cursor: "pointer" }}
-//   />
-// </div>
-//       </div>
-//     </div>
-//   );
-// }
-
 import * as React from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -127,7 +6,6 @@ import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
-import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -147,8 +25,9 @@ import { useNavigate } from "react-router-dom";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import FormatListBulletedTwoToneIcon from "@mui/icons-material/FormatListBulletedTwoTone";
 import ContactPageIcon from "@mui/icons-material/ContactPage";
-import SyncAltIcon from '@mui/icons-material/SyncAlt';
-import FiberNewIcon from '@mui/icons-material/FiberNew';
+import SyncAltIcon from "@mui/icons-material/SyncAlt";
+import FiberNewIcon from "@mui/icons-material/FiberNew";
+import Typography from "@mui/material/Typography";
 
 const drawerWidth = 240;
 
@@ -261,7 +140,7 @@ export default function NavBar() {
       <AppBar
         position="fixed"
         open={open}
-        style={{ backgroundColor: "#04184B" }}
+        style={{ backgroundColor: "#04184B", zIndex: -1 }}
       >
         <Toolbar>
           <div
@@ -275,184 +154,244 @@ export default function NavBar() {
           >
             <div
               className="head"
-              style={{ display: "flex", alignItems: "center" }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginLeft: open ? "" : "3.5%",
+              }}
             >
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleDrawerOpen}
-                edge="start"
-                sx={{
-                  marginRight: 5,
-                  ...(open && { display: "none" }),
-                }}
-              >
-                <MenuIcon />
-              </IconButton>
               <Typography variant="h6" noWrap component="div">
                 MAVEKO PLU
               </Typography>
             </div>
-            <div className="tail" style={{ width: "6%" }}>
+            <div className="tail" style={{ width: "fit-content" }}>
               <div
                 className="actions"
                 style={{
                   display: "flex",
-                  justifyContent: "space-between",
+                  justifyContent: "flex-start",
+                  background: "#fff",
+                  padding: "3%",
+                  paddingRight: "15px",
+                  borderRadius: "10px",
+                  cursor: "pointer",
                 }}
-              >
-                <NotificationsNoneIcon
-                  style={{ cursor: "pointer" }}
-                  onClick={() => setOpen1(!open1)}
-                />
-                <AccountCircleIcon />
-                <ExitToAppIcon
-                  onClick={() => navigate("/")}
-                  style={{ color: "red", cursor: "pointer" }}
-                />
+              > 
+                <AccountCircleIcon style={{ color: "#04184B" }} />
+                <div className="text">
+                  <span style={{color: "black"}}>usename</span>
+                </div>
               </div>
             </div>
           </div>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "rtl" ? (
-              <ChevronRightIcon />
-            ) : (
-              <ChevronLeftIcon />
-            )}
-          </IconButton>
+        <DrawerHeader style={{ background: "#04184B" }}>
+          {!open ? (
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{
+                ...(open && { display: "none" }),
+                color: "#fff",
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+          ) : (
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === "rtl" ? (
+                <ChevronRightIcon style={{ color: "#fff" }} />
+              ) : (
+                <ChevronLeftIcon style={{ color: "#fff" }} />
+              )}
+            </IconButton>
+          )}
         </DrawerHeader>
         <Divider />
-        <List>
-          <ListItem>
-            <ListItemButton
-              onClick={() => navigate("/home")}
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
-            >
-              <ListItemIcon
+        <List
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            height: "100vh",
+          }}
+        >
+          <div className="headList">
+            <ListItem>
+              <ListItemButton
+                onClick={() => navigate("/home")}
                 sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
                 }}
               >
-                <SaveAsIcon style={{ color: "#04184B" }} />
-              </ListItemIcon>
-              <ListItemText
-                primary="DRAFTS PAGE"
-                sx={{ opacity: open ? 1 : 0 }}
-              />
-            </ListItemButton>
-          </ListItem>
-          <ListItem>
-            <ListItemButton
-              onClick={() => navigate("/master")}
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
-                }}
-              >
-                <FormatListBulletedTwoToneIcon style={{ color: "#04184B" }} />
-              </ListItemIcon>
-              <ListItemText
-                primary="MASTER LIST"
-                sx={{ opacity: open ? 1 : 0 }}
-              />
-            </ListItemButton>
-          </ListItem>
-          <ListItem>
-            <ListItemButton
-              onClick={() => navigate("/customer")}
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
-                }}
-              >
-                <ContactPageIcon
-                  style={{ color: "#04184B" }}
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <SaveAsIcon style={{ color: "#04184B" }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary="DRAFTS PAGE"
+                  sx={{ opacity: open ? 1 : 0 }}
                 />
-              </ListItemIcon>
-              <ListItemText
-                primary="CUSTOMER LIST"
-                sx={{ opacity: open ? 1 : 0 }}
-              />
-            </ListItemButton>
-          </ListItem>
-          <ListItem>
-            <ListItemButton
-              onClick={() => navigate("/newitem")}
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
-            >
-              <ListItemIcon
+              </ListItemButton>
+            </ListItem>
+            <ListItem>
+              <ListItemButton
+                onClick={() => navigate("/master")}
                 sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
                 }}
               >
-                <FiberNewIcon
-                  style={{ color: "#04184B" }}
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <FormatListBulletedTwoToneIcon style={{ color: "#04184B" }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary="MASTER LIST"
+                  sx={{ opacity: open ? 1 : 0 }}
                 />
-              </ListItemIcon>
-              <ListItemText
-                primary="NEW ITEM LIST"
-                sx={{ opacity: open ? 1 : 0 }}
-              />
-            </ListItemButton>
-          </ListItem>
-          <ListItem>
-            <ListItemButton
-              onClick={() => navigate("/ps")}
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
-            >
-              <ListItemIcon
+              </ListItemButton>
+            </ListItem>
+            <ListItem>
+              <ListItemButton
+                onClick={() => navigate("/customer")}
                 sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
                 }}
               >
-                <SyncAltIcon
-                  style={{ color: "#04184B" }}
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <ContactPageIcon style={{ color: "#04184B" }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary="CUSTOMER LIST"
+                  sx={{ opacity: open ? 1 : 0 }}
                 />
-              </ListItemIcon>
-              <ListItemText
-                primary="UPDATE SOURCE"
-                sx={{ opacity: open ? 1 : 0 }}
-              />
-            </ListItemButton>
-          </ListItem>
+              </ListItemButton>
+            </ListItem>
+            <ListItem>
+              <ListItemButton
+                onClick={() => navigate("/newitem")}
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <FiberNewIcon style={{ color: "#04184B" }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary="NEW ITEM LIST"
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+            <ListItem>
+              <ListItemButton
+                onClick={() => navigate("/ps")}
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <SyncAltIcon style={{ color: "#04184B" }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary="UPDATE SOURCE"
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+          </div>
+          <div className="tailList">
+            <ListItem>
+              <ListItemButton
+                onClick={() => setOpen1(!open1)}
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <NotificationsNoneIcon style={{ color: "#04184B" }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary="NOTIFICATIONS"
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+            <ListItem>
+              <ListItemButton
+                onClick={() => navigate("/")}
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <ExitToAppIcon style={{ color: "red" }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary="LOGOUT"
+                  sx={{ opacity: open ? 1 : 0, color: "red" }}
+                />
+              </ListItemButton>
+            </ListItem>
+          </div>
         </List>
       </Drawer>
     </Box>
