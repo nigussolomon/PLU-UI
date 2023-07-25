@@ -28,6 +28,7 @@ import ContactPageIcon from "@mui/icons-material/ContactPage";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import FiberNewIcon from "@mui/icons-material/FiberNew";
 import Typography from "@mui/material/Typography";
+import Badge from "@mui/material/Badge";
 
 const drawerWidth = 240;
 
@@ -118,7 +119,7 @@ export default function NavBar() {
         onClose={() => {
           setOpen1(!open1);
         }}
-        sx={{ height: "25vh", width: "100vw", overflow: "hidden" }}
+        sx={{ height: "fit-content", width: "100vw", overflow: "hidden" }}
         aria-describedby="alert-dialog-slide-description"
       >
         <DialogTitle style={{ textAlign: "left" }}>
@@ -126,21 +127,62 @@ export default function NavBar() {
           <Divider style={{ marginTop: "8px" }} />
         </DialogTitle>
         <DialogContent style={{ width: "25vw" }}>
-          <div
-            className="pathSelect"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          ></div>
+          <div>
+            <List>
+              <ListItem style={{ display: "flex" }}>
+                <ListItemIcon>
+                  <NotificationsNoneIcon />
+                </ListItemIcon>
+                <ListItemText
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    alert("You clicked a notification!");
+                  }}
+                  primary={"This is a test Notification"}
+                  secondary={
+                    "This the body to this test notification to see how it's gonna be structured"
+                  }
+                />
+              </ListItem>
+              <ListItem style={{ display: "flex" }}>
+                <ListItemIcon>
+                  <NotificationsNoneIcon />
+                </ListItemIcon>
+                <ListItemText
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    alert("You clicked a notification!");
+                  }}
+                  primary={"This is a test Notification"}
+                  secondary={
+                    "This the body to this test notification to see how it's gonna be structured"
+                  }
+                />
+              </ListItem>
+              <ListItem style={{ display: "flex" }}>
+                <ListItemIcon>
+                  <NotificationsNoneIcon />
+                </ListItemIcon>
+                <ListItemText
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    alert("You clicked a notification!");
+                  }}
+                  primary={"This is a test Notification"}
+                  secondary={
+                    "This the body to this test notification to see how it's gonna be structured"
+                  }
+                />
+              </ListItem>
+            </List>
+          </div>
         </DialogContent>
       </Dialog>
       <CssBaseline />
       <AppBar
         position="fixed"
         open={open}
-        style={{ backgroundColor: "#04184B", zIndex: -1 }}
+        style={{ backgroundColor: "#04184B", zIndex: 1 }}
       >
         <Toolbar>
           <div
@@ -176,17 +218,17 @@ export default function NavBar() {
                   borderRadius: "10px",
                   cursor: "pointer",
                 }}
-              > 
+              >
                 <AccountCircleIcon style={{ color: "#04184B" }} />
                 <div className="text">
-                  <span style={{color: "black"}}>usename</span>
+                  <span style={{ color: "black" }}>usename</span>
                 </div>
               </div>
             </div>
           </div>
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={open}>
+      <Drawer style={{zIndex: 2}} variant="permanent" open={open}>
         <DrawerHeader style={{ background: "#04184B" }}>
           {!open ? (
             <IconButton
@@ -359,7 +401,9 @@ export default function NavBar() {
                     justifyContent: "center",
                   }}
                 >
-                  <NotificationsNoneIcon style={{ color: "#04184B" }} />
+                  <Badge badgeContent={3} color="error">
+                    <NotificationsNoneIcon style={{ color: "#04184B" }} />
+                  </Badge>
                 </ListItemIcon>
                 <ListItemText
                   primary="NOTIFICATIONS"

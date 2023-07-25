@@ -206,18 +206,21 @@ function createData(
         country: "Germany",
         description: "11091700",
         offer: 300,
+        currency: "USD($)"
       },
       {
         name: "Contacto",
         country: "Germany",
         description: "11091700",
         offer: 300,
+        currency: "USD($)"
       },
       {
         name: "Contacto",
         country: "Germany",
         description: "11091700",
         offer: 300,
+        currency: "USD($)"
       },
     ],
   };

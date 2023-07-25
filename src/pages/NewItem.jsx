@@ -16,54 +16,19 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import NavBar from "../components/NavBar";
 import { rows3 } from "../mock/Data";
 import Button from "@mui/material/Button";
+import AddSupplierDialog from "../components/dialogs/addSupplier";
 
-function createData(
-  id,
-  item_code,
-  item_description,
-  dimensions,
-  price_per_pc,
-  new_price,
-  base_unit,
-  target_unit,
-  currency,
-  created_at,
-  updated_at
-) {
-  return {
-    id,
-    item_code,
-    item_description,
-    dimensions,
-    price_per_pc,
-    new_price,
-    base_unit,
-    target_unit,
-    currency,
-    created_at,
-    updated_at,
-    checked: false,
-    history: [
-      {
-        date: "2020-01-05",
-        customerId: "11091700",
-        amount: 3,
-      },
-      {
-        date: "2020-01-02",
-        customerId: "Anonymous",
-        amount: 1,
-      },
-    ],
-  };
-}
-
-// ... (previous code)
+// create data function is in the mock/Data.jsx file use that for storing from api fetch
 
 function Row(props) {
-  const { row, onRadioChange } = props;
+  const { row } = props;
   const [open, setOpen] = React.useState(false);
   const [selectedHistoryRow, setSelectedHistoryRow] = React.useState(null);
+  const [open1, setOpen1] = React.useState(false);
+
+  const handleClose = () => {
+    setOpen1(false);
+  };
 
   const handleRadioChange = (event, historyRow) => {
     setSelectedHistoryRow(historyRow);
@@ -71,6 +36,7 @@ function Row(props) {
 
   return (
     <React.Fragment>
+      <AddSupplierDialog open={open1} handleClose={handleClose} row={row} />
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell>
           <IconButton
@@ -84,6 +50,7 @@ function Row(props) {
         <TableCell component="th" scope="row">
           {row.item_code}
         </TableCell>
+        <TableCell align="left">{row.item_description}</TableCell>
         <TableCell align="right">{row.price_per_pc}</TableCell>
         <TableCell align="right">{row.new_price}</TableCell>
         <TableCell align="right">{row.base_unit}</TableCell>
@@ -91,7 +58,24 @@ function Row(props) {
         <TableCell align="right">{row.currency}</TableCell>
         <TableCell align="right">{row.created_at}</TableCell>
         <TableCell align="right">{row.updated_at}</TableCell>
-        <TableCell align="right">{/* Render actions here */}</TableCell>
+        <TableCell align="right">
+          {
+            <Button
+              onClick={() => {
+                setOpen(true);
+                setOpen1(true);
+              }}
+              style={{
+                padding: "3.5%",
+                paddingInline: "10%",
+                backgroundColor: "#04184B",
+              }}
+              variant="contained"
+            >
+              ADD SUPPLIER
+            </Button>
+          }
+        </TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={10}>
@@ -106,7 +90,8 @@ function Row(props) {
                     <TableCell>Supplier Name</TableCell>
                     <TableCell>Supplier Country</TableCell>
                     <TableCell align="right">Supplier Description</TableCell>
-                    <TableCell align="right">Supplier Offer($)</TableCell>
+                    <TableCell align="right">Supplier Offer</TableCell>
+                    <TableCell align="right">Supplier Currency</TableCell>
                     <TableCell align="right">Select</TableCell>
                   </TableRow>
                 </TableHead>
@@ -123,6 +108,7 @@ function Row(props) {
                       <TableCell align="right">
                         {Math.round(historyRow.offer)}
                       </TableCell>
+                      <TableCell align="right">{historyRow.currency}</TableCell>
                       <TableCell align="right">
                         <input
                           type="radio"
@@ -149,6 +135,7 @@ function Row(props) {
 Row.propTypes = {
   row: PropTypes.shape({
     item_code: PropTypes.string.isRequired,
+    item_description: PropTypes.string.isRequired,
     price_per_pc: PropTypes.number.isRequired,
     new_price: PropTypes.number.isRequired,
     base_unit: PropTypes.string.isRequired,
@@ -175,15 +162,26 @@ export default function NewItem() {
       prevRows.map((row) => (row.id === id ? { ...row, checked } : row))
     );
   };
+
   return (
     <>
       <NavBar></NavBar>
-      <Typography
-        style={{ marginTop: "10vh", marginInline: "8vh" }}
-        variant="h4"
+      <div
+        className="head"
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+          marginRight: "20px",
+        }}
       >
-        New Item Price List
-      </Typography>
+        <Typography
+          style={{ marginTop: "10vh", marginInline: "8vh" }}
+          variant="h4"
+        >
+          New Item Price List
+        </Typography>
+      </div>
       <TableContainer
         style={{ marginInline: "4vw", width: "95vw", marginTop: "2vh" }}
         component={Paper}
@@ -192,19 +190,40 @@ export default function NewItem() {
           <TableHead style={{ backgroundColor: "#04184B" }}>
             <TableRow>
               <TableCell />
-              <TableCell style={{color: "white"}} align="right">Item Code</TableCell>
-              <TableCell style={{color: "white"}} align="right">Price Per PC</TableCell>
-              <TableCell style={{color: "white"}} align="right">New Price</TableCell>
-              <TableCell style={{color: "white"}} align="right">Base Unit</TableCell>
-              <TableCell style={{color: "white"}} align="right">Target Unit</TableCell>
-              <TableCell style={{color: "white"}} align="right">Currency</TableCell>
-              <TableCell style={{color: "white"}} align="right">Created At</TableCell>
-              <TableCell style={{color: "white"}} align="right">Updated At</TableCell>
-              <TableCell style={{color: "white"}} align="right">Actions</TableCell>
+              <TableCell style={{ color: "white" }} align="left">
+                Item Code
+              </TableCell>
+              <TableCell style={{ color: "white" }} align="left">
+                Item Description
+              </TableCell>
+              <TableCell style={{ color: "white" }} align="right">
+                Price Per PC
+              </TableCell>
+              <TableCell style={{ color: "white" }} align="right">
+                New Price
+              </TableCell>
+              <TableCell style={{ color: "white" }} align="right">
+                Base Unit
+              </TableCell>
+              <TableCell style={{ color: "white" }} align="right">
+                Target Unit
+              </TableCell>
+              <TableCell style={{ color: "white" }} align="right">
+                Currency
+              </TableCell>
+              <TableCell style={{ color: "white" }} align="right">
+                Created At
+              </TableCell>
+              <TableCell style={{ color: "white" }} align="right">
+                Updated At
+              </TableCell>
+              <TableCell style={{ color: "white" }} align="right">
+                Actions
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows3.map((row) => (
+            {rowsState.map((row) => (
               <Row
                 key={row.item_code}
                 row={row}
@@ -214,14 +233,27 @@ export default function NewItem() {
           </TableBody>
         </Table>
       </TableContainer>
-      <div className="actions" style={{display: "flex", justifyContent: "flex-end", marginTop: "1.5vh", marginRight: "1vw",}}>
-      <Button
-        variant="contained"
-        color="success"
-        style={{ padding: ".7%", paddingInline: "1.7%", marginLeft: "8vw" }}
+      <div
+        className="actions"
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginTop: "1.5vh",
+          marginRight: "1vw",
+        }}
       >
-        APPROVE SUPPLIERS
-      </Button>
+        <Button
+          variant="contained"
+          color="success"
+          style={{
+            padding: ".5%",
+            paddingInline: "1.7%",
+            marginLeft: "8vw",
+            marginBottom: "3vh",
+          }}
+        >
+          APPROVE SUPPLIERS
+        </Button>
       </div>
     </>
   );
