@@ -84,6 +84,12 @@ export default function Home({ source, setSource }) {
                   ? "success"
                   : "primary"
               }
+              style={{
+                backgroundColor:
+                  params.row.status === "Pending"
+                    ? "#04184B"
+                    : null,
+              }}
               variant="contained"
             >
               DETAILS
@@ -172,7 +178,7 @@ export default function Home({ source, setSource }) {
           Price List Drafts
         </Typography>
         <Typography style={{ margin: "1%", fontWeight: 900 }} variant="h5">
-          {source}
+          {localStorage.getItem("source") ? localStorage.getItem("source") : "Drafts"}
         </Typography>
       </div>
       <div

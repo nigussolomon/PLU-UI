@@ -18,9 +18,6 @@ import ListItemText from "@mui/material/ListItemText";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import DialogTitle from "@mui/material/DialogTitle";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
 import { useNavigate } from "react-router-dom";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import FormatListBulletedTwoToneIcon from "@mui/icons-material/FormatListBulletedTwoTone";
@@ -29,6 +26,8 @@ import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import FiberNewIcon from "@mui/icons-material/FiberNew";
 import Typography from "@mui/material/Typography";
 import Badge from "@mui/material/Badge";
+import NotificationDialog from '../components/dialogs/notificationDialog'
+import LoyaltyIcon from '@mui/icons-material/Loyalty';
 
 const drawerWidth = 240;
 
@@ -113,71 +112,7 @@ export default function NavBar() {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <Dialog
-        open={open1}
-        keepMounted
-        onClose={() => {
-          setOpen1(!open1);
-        }}
-        sx={{ height: "fit-content", width: "100vw", overflow: "hidden" }}
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <DialogTitle style={{ textAlign: "left" }}>
-          {"NOTIFICATIONS"}
-          <Divider style={{ marginTop: "8px" }} />
-        </DialogTitle>
-        <DialogContent style={{ width: "25vw" }}>
-          <div>
-            <List>
-              <ListItem style={{ display: "flex" }}>
-                <ListItemIcon>
-                  <NotificationsNoneIcon />
-                </ListItemIcon>
-                <ListItemText
-                  style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    alert("You clicked a notification!");
-                  }}
-                  primary={"This is a test Notification"}
-                  secondary={
-                    "This the body to this test notification to see how it's gonna be structured"
-                  }
-                />
-              </ListItem>
-              <ListItem style={{ display: "flex" }}>
-                <ListItemIcon>
-                  <NotificationsNoneIcon />
-                </ListItemIcon>
-                <ListItemText
-                  style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    alert("You clicked a notification!");
-                  }}
-                  primary={"This is a test Notification"}
-                  secondary={
-                    "This the body to this test notification to see how it's gonna be structured"
-                  }
-                />
-              </ListItem>
-              <ListItem style={{ display: "flex" }}>
-                <ListItemIcon>
-                  <NotificationsNoneIcon />
-                </ListItemIcon>
-                <ListItemText
-                  style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    alert("You clicked a notification!");
-                  }}
-                  primary={"This is a test Notification"}
-                  secondary={
-                    "This the body to this test notification to see how it's gonna be structured"
-                  }
-                />
-              </ListItem>
-            </List>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <NotificationDialog open1={open1} setOpen1={setOpen1}/>
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -352,6 +287,30 @@ export default function NavBar() {
                   }}
                 >
                   <FiberNewIcon style={{ color: "#04184B" }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary="NEW ITEM LIST"
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+            <ListItem>
+              <ListItemButton
+                onClick={() => navigate("/ps")}
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <LoyaltyIcon style={{ color: "#04184B" }} />
                 </ListItemIcon>
                 <ListItemText
                   primary="NEW ITEM LIST"

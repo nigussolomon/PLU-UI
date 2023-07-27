@@ -74,7 +74,7 @@ export default function Master() {
   ];
 
   return (
-    <div style={{margin: "3.5vw", width: "95vw"}}>
+    <div style={{ margin: "3.5vw", width: "95vw" }}>
       <Dialog
         open={open}
         TransitionComponent={Transition}
@@ -228,10 +228,17 @@ export default function Master() {
           }}
           pageSizeOptions={[5, 10, 15, 20, 25]}
         />
-        <div className="actions" style={{ display: "flex", justifyContent: "flex-end", marginTop: ".6%", }}>
-          <Button style={{padding: ".7%", paddingInline: "2%"}}
+        <div
+          className="actions"
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginTop: ".6%",
+          }}
+        >
+          <Button
+            style={{ padding: ".7%", paddingInline: "2%", backgroundColor: "#04184B" }}
             variant="contained"
-            color="primary"
             endIcon={<FormatListBulletedIcon />}
           >
             DRAFT NEW PRICE
