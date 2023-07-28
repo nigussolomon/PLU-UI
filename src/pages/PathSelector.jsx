@@ -103,7 +103,7 @@ export default function PathSelector({ source, setSource }) {
         NEW SUPPLIER
       </div>
       <div
-        onClick={() => naviagte("/ps")}
+        onClick={() => naviagte("/so")}
         className="path"
         style={{
           padding: "1%",

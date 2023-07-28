@@ -267,3 +267,10 @@ export const rows3 = [
     "2023-07-20"
   ),
 ];
+
+export const rows4 = [
+  { id: 1, so_ref: "SO-123", status: "Pending", so_created: "2023-07-27" },
+  { id: 2, so_ref: "SO-456", status: "Pending", so_created: "2023-07-26" },
+  { id: 3, so_ref: "SO-789", status: "Approved", so_created: "2023-07-25" },
+  { id: 4, so_ref: "SO-389", status: "Pending", so_created: "2023-07-24" },
+];

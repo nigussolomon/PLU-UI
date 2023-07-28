@@ -77,7 +77,7 @@ export default function DataSourceDialog({
       sx={{
         height: "25vh",
         width: "100vw",
-        minWidth: "40vw",
+        minWidth: "100vw",
         overflow: "hidden",
       }}
       aria-describedby="alert-dialog-slide-description"
@@ -85,7 +85,7 @@ export default function DataSourceDialog({
       <DialogTitle style={{ textAlign: "center" }}>
         {"Choose Data Source"}
       </DialogTitle>
-      <DialogContent style={{ width: "25vw" }}>
+      <DialogContent style={{ width: "100%", minWidth: "80%", }}>
         <div
           className="pathSelect"
           style={{
@@ -108,7 +108,7 @@ export default function DataSourceDialog({
                 component="span"
                 startIcon={<CloudUploadIcon />}
                 style={{
-                  padding: "3%",
+                  padding: "15px",
                   margin: "1%",
                   background: "#04184B",
                   color: "white",
@@ -116,6 +116,7 @@ export default function DataSourceDialog({
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
+                  width: "150px",
                   cursor: "pointer",
                   "&:hover": {
                     background: "#08327B",
@@ -129,15 +130,16 @@ export default function DataSourceDialog({
           <div
             className="path"
             style={{
-              padding: "3%",
-              margin: "1%",
+              padding: "15px",
+              margin: "2%",
+              marginLeft: "5%", 
               background: "#04184B",
               color: "white",
               borderRadius: "5px",
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              width: "25%",
+              width: "180px",
               cursor: "pointer",
             }}
           >

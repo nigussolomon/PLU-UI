@@ -16,7 +16,6 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { useNavigate } from "react-router-dom";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
@@ -26,10 +25,13 @@ import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import FiberNewIcon from "@mui/icons-material/FiberNew";
 import Typography from "@mui/material/Typography";
 import Badge from "@mui/material/Badge";
-import NotificationDialog from '../components/dialogs/notificationDialog'
-import LoyaltyIcon from '@mui/icons-material/Loyalty';
+import NotificationDialog from "../components/dialogs/notificationDialog";
+import LoyaltyIcon from "@mui/icons-material/Loyalty";
+import FunctionsIcon from "@mui/icons-material/Functions";
+import Avatar from "@mui/material/Avatar";
+import JoinRightIcon from "@mui/icons-material/JoinRight";
 
-const drawerWidth = 240;
+const drawerWidth = 340;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -57,7 +59,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "flex-end",
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
 
@@ -112,7 +113,7 @@ export default function NavBar() {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <NotificationDialog open1={open1} setOpen1={setOpen1}/>
+      <NotificationDialog open1={open1} setOpen1={setOpen1} />
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -142,28 +143,12 @@ export default function NavBar() {
               </Typography>
             </div>
             <div className="tail" style={{ width: "fit-content" }}>
-              <div
-                className="actions"
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-start",
-                  background: "#fff",
-                  padding: "3%",
-                  paddingRight: "15px",
-                  borderRadius: "10px",
-                  cursor: "pointer",
-                }}
-              >
-                <AccountCircleIcon style={{ color: "#04184B" }} />
-                <div className="text">
-                  <span style={{ color: "black" }}>usename</span>
-                </div>
-              </div>
+              <Avatar variant="square">NS</Avatar>
             </div>
           </div>
         </Toolbar>
       </AppBar>
-      <Drawer style={{zIndex: 2}} variant="permanent" open={open}>
+      <Drawer style={{ zIndex: 2 }} variant="permanent" open={open}>
         <DrawerHeader style={{ background: "#04184B" }}>
           {!open ? (
             <IconButton
@@ -296,7 +281,7 @@ export default function NavBar() {
             </ListItem>
             <ListItem>
               <ListItemButton
-                onClick={() => navigate("/ps")}
+                onClick={() => navigate("/so")}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
@@ -313,11 +298,61 @@ export default function NavBar() {
                   <LoyaltyIcon style={{ color: "#04184B" }} />
                 </ListItemIcon>
                 <ListItemText
-                  primary="NEW ITEM LIST"
+                  primary="SALES ORDER"
                   sx={{ opacity: open ? 1 : 0 }}
                 />
               </ListItemButton>
             </ListItem>
+
+            <ListItem>
+              <ListItemButton
+                onClick={() => navigate("/fs")}
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <FunctionsIcon style={{ color: "#04184B" }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary="FORMULA SETUP"
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+            <ListItem>
+              <ListItemButton
+                onClick={() => navigate("/fs")}
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <JoinRightIcon style={{ color: "#04184B" }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary="ITEM CROSS REFERENCING"
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+            {/* JoinRightIcon */}
             <ListItem>
               <ListItemButton
                 onClick={() => navigate("/ps")}

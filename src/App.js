@@ -9,6 +9,8 @@ import PathSelector from './pages/PathSelector.jsx'
 import Master from './pages/Master.jsx'
 import Customer from './pages/Customer.jsx'
 import NewItem from './pages/NewItem.jsx'
+import SalesOrder from './pages/SalesOrder.jsx'
+import FormualSetup from './pages/formulaSetup.jsx'
 import React from 'react';
 
 function App() {
@@ -22,6 +24,8 @@ function App() {
         <Route path="/master" element={<Master/>}/>
         <Route path="/customer" element={<Customer/>}/>
         <Route path="/newitem" element={<NewItem/>}/>
+        <Route path="/so" element={<SalesOrder/>}/>
+        <Route path="/fs" element={<FormualSetup/>}/>
       </Routes>
     </Router>
   );
