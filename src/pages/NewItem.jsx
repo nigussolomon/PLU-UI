@@ -17,14 +17,22 @@ import NavBar from "../components/NavBar";
 import { rows3 } from "../mock/Data";
 import Button from "@mui/material/Button";
 import AddSupplierDialog from "../components/dialogs/addSupplier";
-
-// create data function is in the mock/Data.jsx file use that for storing from api fetch
+import AddItemDialog from "../components/dialogs/addItem";
+import Checkbox from "@mui/material/Checkbox";
+import AlertMessage from "../components/dialogs/alert";
 
 function Row(props) {
-  const { row } = props;
+  const { row, onCheckboxChange } = props;
   const [open, setOpen] = React.useState(false);
   const [selectedHistoryRow, setSelectedHistoryRow] = React.useState(null);
   const [open1, setOpen1] = React.useState(false);
+  const [openSnackBar, setOpenSnackBar] = React.useState(false);
+  const [severity, setSeverity] = React.useState("error");
+  const [message, setMessage] = React.useState("Test Message");
+
+  const closeSnackbar = () => {
+    setOpenSnackBar(false);
+  };
 
   const handleClose = () => {
     setOpen1(false);
@@ -32,6 +40,10 @@ function Row(props) {
 
   const handleRadioChange = (event, historyRow) => {
     setSelectedHistoryRow(historyRow);
+  };
+
+  const handleCheckbox = (event) => {
+    onCheckboxChange(row.item_code, event.target.checked);
   };
 
   return (
@@ -46,6 +58,14 @@ function Row(props) {
           >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
+        </TableCell>
+        <TableCell>
+          <Checkbox
+            checked={row.checked}
+            onChange={handleCheckbox}
+            color="primary"
+            inputProps={{ "aria-label": "select item" }}
+          />
         </TableCell>
         <TableCell component="th" scope="row">
           {row.item_code}
@@ -130,8 +150,6 @@ function Row(props) {
   );
 }
 
-// ... (remaining code)
-
 Row.propTypes = {
   row: PropTypes.shape({
     item_code: PropTypes.string.isRequired,
@@ -150,22 +168,44 @@ Row.propTypes = {
         amount: PropTypes.number.isRequired,
       })
     ).isRequired,
+    checked: PropTypes.bool.isRequired,
   }).isRequired,
   onCheckboxChange: PropTypes.func.isRequired,
 };
 
 export default function NewItem() {
   const [rowsState, setRowsState] = React.useState(rows3);
+  const [open2, setOpen2] = React.useState(false);
+  const [openSnackBar, setOpenSnackBar] = React.useState(false);
+  const [severity, setSeverity] = React.useState("error");
+  const [message, setMessage] = React.useState("Test Message");
 
-  const handleCheckboxChange = (id, checked) => {
+  const closeSnackbar = () => {
+    setOpenSnackBar(false);
+  };
+
+  const handleClose1 = () => {
+    setOpen2(false);
+  };
+
+  const handleCheckboxChange = (itemCode, checked) => {
     setRowsState((prevRows) =>
-      prevRows.map((row) => (row.id === id ? { ...row, checked } : row))
+      prevRows.map((row) =>
+        row.item_code === itemCode ? { ...row, checked } : row
+      )
     );
   };
 
   return (
     <>
       <NavBar></NavBar>
+      <AlertMessage
+        openSnackBar={openSnackBar}
+        closeSnackbar={closeSnackbar}
+        message={message}
+        severity={severity}
+      />
+      <AddItemDialog open={open2} handleClose={handleClose1} />
       <div
         className="head"
         style={{
@@ -181,6 +221,39 @@ export default function NewItem() {
         >
           New Item Price List
         </Typography>
+        <div
+          className="actions"
+          style={{
+            display: "flex",
+            width: "500px",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button
+            variant="contained"
+            style={{
+              padding: "2.5%",
+              paddingInline: "8%",
+              backgroundColor: "#04184B",
+            }}
+          >
+            IMPORT ITEMS
+          </Button>
+          <div className="space" style={{ width: "20px" }}></div>
+          <Button
+            onClick={() => {
+              setOpen2(true);
+            }}
+            variant="contained"
+            style={{
+              padding: "2.5%",
+              paddingInline: "8%",
+              backgroundColor: "#04184B",
+            }}
+          >
+            ADD ITEM
+          </Button>
+        </div>
       </div>
       <TableContainer
         style={{ marginInline: "4vw", width: "95vw", marginTop: "2vh" }}
@@ -190,6 +263,9 @@ export default function NewItem() {
           <TableHead style={{ backgroundColor: "#04184B" }}>
             <TableRow>
               <TableCell />
+              <TableCell style={{ color: "white" }} align="left">
+                Select
+              </TableCell>
               <TableCell style={{ color: "white" }} align="left">
                 Item Code
               </TableCell>
@@ -243,12 +319,34 @@ export default function NewItem() {
         }}
       >
         <Button
+          onClick={() => {
+            setMessage("Items have been Quened for approval!");
+            setSeverity("info");
+            setOpenSnackBar(true);
+          }}
+          variant="contained"
+          color="warning"
+          style={{
+            padding: ".5%",
+            paddingInline: "1.7%",
+            marginLeft: "8vw",
+            marginBottom: "3vh",
+          }}
+        >
+          START UPDATE
+        </Button>
+        <div className="space" style={{ width: "20px" }}></div>
+        <Button
+          onClick={() => {
+            setMessage("Successfully added a supplier for items!");
+            setSeverity("success");
+            setOpenSnackBar(true);
+          }}
           variant="contained"
           color="success"
           style={{
             padding: ".5%",
             paddingInline: "1.7%",
-            marginLeft: "8vw",
             marginBottom: "3vh",
           }}
         >

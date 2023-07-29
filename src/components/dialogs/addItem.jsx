@@ -13,7 +13,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AddSupplierDialog({ row, open, handleClose }) {
+export default function AddItemDialog({ open, handleClose }) {
   const [openSnackBar, setOpenSnackBar] = React.useState(false);
   const [severity, setSeverity] = React.useState("error");
   const [message, setMessage] = React.useState("Test Message");
@@ -45,10 +45,7 @@ export default function AddSupplierDialog({ row, open, handleClose }) {
           className="title"
           style={{ display: "flex", flexDirection: "column" }}
         >
-          <span style={{ fontSize: "35px" }}>{row.item_code}</span>
-          <span style={{ fontSize: "15px", fontWeight: 400 }}>
-            {row.item_description}
-          </span>
+          <span style={{ fontSize: "35px" }}>New Item</span>
         </div>
         <Divider style={{ marginTop: "2%" }} />
       </DialogTitle>
@@ -66,7 +63,7 @@ export default function AddSupplierDialog({ row, open, handleClose }) {
             >
               <TextField
                 id="outlined-basic"
-                label="Supplier Name"
+                label="Item Code"
                 variant="outlined"
                 style={{
                   width: "48%",
@@ -75,7 +72,7 @@ export default function AddSupplierDialog({ row, open, handleClose }) {
 
               <TextField
                 id="outlined-basic"
-                label="Supplier Country"
+                label="Item Name"
                 variant="outlined"
                 style={{
                   width: "48%",
@@ -94,7 +91,7 @@ export default function AddSupplierDialog({ row, open, handleClose }) {
             >
               <TextField
                 id="outlined-basic"
-                label="Supplier Description"
+                label="Item Description"
                 variant="outlined"
                 fullWidth
                 multiline
@@ -112,21 +109,21 @@ export default function AddSupplierDialog({ row, open, handleClose }) {
             >
               <TextField
                 id="outlined-basic"
-                label="Supplier Offer"
+                label="Dimensions"
                 variant="outlined"
-                style={{ width: "65%" }}
+                style={{ width: "76%" }}
               />
 
               <TextField
                 select
                 id="outlined-basic"
-                label="Currency"
+                label="Unit"
                 variant="outlined"
-                style={{ width: "30%" }}
+                style={{ width: "20%" }}
               >
-                <MenuItem value="usd">USD</MenuItem>
-                <MenuItem value="eur">EUR</MenuItem>
-                <MenuItem value="etb">ETB</MenuItem>
+                <MenuItem value="usd">PCS</MenuItem>
+                <MenuItem value="eur">BOX</MenuItem>
+                <MenuItem value="etb">PACK</MenuItem>
               </TextField>
             </div>
           </div>
@@ -138,7 +135,7 @@ export default function AddSupplierDialog({ row, open, handleClose }) {
             <Button
               onClick={() => {
                 setOpenSnackBar(true);
-                setMessage("Supplier Added Successfully");
+                setMessage("Item Added Successfully");
                 setSeverity("success");
                 handleClose();
               }}

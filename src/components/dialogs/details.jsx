@@ -25,6 +25,9 @@ export default function Details({
   getCellStyles,
   setDisabled,
   setDummyRow,
+  setOpenSnackBar,
+  setSeverity,
+  setMessage,
 }) {
   return (
     <Dialog
@@ -106,7 +109,12 @@ export default function Details({
                 style={{ padding: ".5%", paddingInline: "2.5%" }}
                 color="success"
                 variant="contained"
-                onClick={handleClose1}
+                onClick={() => {
+                  handleClose1();
+                  setSeverity("success");
+                  setMessage("Items successfully recorded!");
+                  setOpenSnackBar(true);
+                }}
               >
                 ACCEPT & RECORD
               </Button>
@@ -125,6 +133,9 @@ export default function Details({
                   };
                   setDummyRow(test);
                   setDisabled(false);
+                  setSeverity("success");
+                  setMessage("Currency converted successfully");
+                  setOpenSnackBar(true);
                 }}
               >
                 CONVERT CURRENCY
@@ -132,6 +143,12 @@ export default function Details({
             </>
           )}
           <Button
+            onClick={() => {
+              handleClose1();
+              setSeverity("error");
+              setMessage("Items have been archived!");
+              setOpenSnackBar(true);
+            }}
             style={{ padding: ".5%", paddingInline: "2.5%" }}
             color="error"
             variant="contained"

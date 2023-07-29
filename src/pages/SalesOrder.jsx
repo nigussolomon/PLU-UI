@@ -19,6 +19,7 @@ export default function SalesOrder() {
   const [selectedRow, setSelectedRow] = useState(null);
   const [actions, setActions] = useState(true);
   const [visible, setVisible] = useState("none");
+  const [addPutButt, setAddPutButt] = useState(false);
 
   const columns = [
     { field: "ItemCode", headerName: "Item Code", width: 150 },
@@ -37,16 +38,27 @@ export default function SalesOrder() {
       field: "details",
       headerName: "Details",
       width: 250,
-      renderCell: (params) => (
-        <Button
-          disabled={loading}
-          variant={params.row.status === "Approved" ? "outlined" : "contained"}
-          size="small"
-          color={params.row.status === "Approved" ? "success" : "primary"}
-        >
-          Details
-        </Button>
-      ),
+      renderCell: (params) => {
+        const handleActionClick = async (event) => {
+          await event.stopPropagation();
+          await setAddPutButt(true);
+          await setCode(params.row.so_ref);
+          fetchSOItems();
+        };
+        return (
+          <Button
+            onClick={handleActionClick}
+            disabled={loading}
+            variant={
+              params.row.status === "Approved" ? "outlined" : "contained"
+            }
+            size="small"
+            color={params.row.status === "Approved" ? "success" : "primary"}
+          >
+            Details
+          </Button>
+        );
+      },
     },
   ];
 
@@ -62,7 +74,7 @@ export default function SalesOrder() {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/so_items?po_login_code=${code}&user_full_name=maveko_plu_module}`,
+        `http://192.168.1.10:8000/so_items?po_login_code=${code}&user_full_name=maveko_plu_module}`,
         {
           method: "GET",
           headers: {
@@ -187,17 +199,31 @@ export default function SalesOrder() {
               Cancel
             </Button>
             <div className="space" style={{ width: "1%" }}></div>
-            <Button
-              onClick={() => {
-                setVisible("none");
-              }}
-              disabled={actions}
-              variant="contained"
-              color="success"
-              style={{ padding: ".6%", paddingInline: "3%" }}
-            >
-              Save Item
-            </Button>
+            {addPutButt ? (
+              <Button
+                onClick={() => {
+                  setVisible("none");
+                }}
+                disabled={actions}
+                variant="contained"
+                color="success"
+                style={{ padding: ".6%", paddingInline: "3%" }}
+              >
+                ADJUST PRICE
+              </Button>
+            ) : (
+              <Button
+                onClick={() => {
+                  setVisible("none");
+                }}
+                disabled={actions}
+                variant="contained"
+                color="success"
+                style={{ padding: ".6%", paddingInline: "3%" }}
+              >
+                Save Order
+              </Button>
+            )}
           </div>
         </div>
         <Dialog

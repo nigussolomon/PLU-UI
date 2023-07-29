@@ -30,6 +30,7 @@ import LoyaltyIcon from "@mui/icons-material/Loyalty";
 import FunctionsIcon from "@mui/icons-material/Functions";
 import Avatar from "@mui/material/Avatar";
 import JoinRightIcon from "@mui/icons-material/JoinRight";
+import { deepOrange } from '@mui/material/colors';
 
 const drawerWidth = 340;
 
@@ -143,7 +144,7 @@ export default function NavBar() {
               </Typography>
             </div>
             <div className="tail" style={{ width: "fit-content" }}>
-              <Avatar variant="square">NS</Avatar>
+              <Avatar sx={{ bgcolor: deepOrange[500], borderRadius: "10px", boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px;" }} variant="square">NS</Avatar>
             </div>
           </div>
         </Toolbar>
@@ -372,7 +373,7 @@ export default function NavBar() {
                   <SyncAltIcon style={{ color: "#04184B" }} />
                 </ListItemIcon>
                 <ListItemText
-                  primary="UPDATE SOURCE"
+                  primary="CHOOSE SOURCE"
                   sx={{ opacity: open ? 1 : 0 }}
                 />
               </ListItemButton>

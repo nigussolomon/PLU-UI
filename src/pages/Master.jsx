@@ -11,6 +11,7 @@ import Typography from "@mui/material/Typography";
 import { DataGrid } from "@mui/x-data-grid";
 import { rows2 } from "../mock/Data";
 import TableCell from "@mui/material/TableCell";
+import AlertMessage from "../components/dialogs/alert";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -18,6 +19,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function Master() {
   const [open, setOpen] = React.useState(false);
+  const [openSnackBar, setOpenSnackBar] = React.useState(false);
+  const [severity, setSeverity] = React.useState("error");
+  const [message, setMessage] = React.useState("Test Message");
+
+  const closeSnackbar = () => {
+    setOpenSnackBar(false);
+  };
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -64,7 +72,7 @@ export default function Master() {
         };
         return (
           <div onClick={handleActionClick}>
-            <Button color="primary" variant="standard">
+            <Button style={{ backgroundColor: "#04184B" }} variant="contained">
               DETAILS
             </Button>
           </div>
@@ -75,6 +83,12 @@ export default function Master() {
 
   return (
     <div style={{ margin: "3.5vw", width: "95vw" }}>
+      <AlertMessage
+        openSnackBar={openSnackBar}
+        closeSnackbar={closeSnackbar}
+        severity={severity}
+        message={message}
+      />
       <Dialog
         open={open}
         TransitionComponent={Transition}
@@ -85,7 +99,7 @@ export default function Master() {
         sx={{ width: "100vw", overflow: "hidden" }}
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle style={{ textAlign: "center" }}>
+        <DialogTitle style={{ textAlign: "left" }}>
           {"Item Details"}
         </DialogTitle>
         <DialogContent style={{ minWidth: "50vh" }}>
@@ -97,8 +111,8 @@ export default function Master() {
             }}
           >
             {" "}
-            <h4>Target Unit</h4>
-            <h4>Target Unit</h4>
+            <span>Target Unit</span>
+            <span>PCS</span>
           </TableCell>
           <br />
           <TableCell
@@ -109,8 +123,8 @@ export default function Master() {
             }}
           >
             {" "}
-            <h4>Target Unit</h4>
-            <h4>Target Unit</h4>
+            <span>Target Unit</span>
+            <span>PCS</span>
           </TableCell>
           <br />
           <TableCell
@@ -121,8 +135,8 @@ export default function Master() {
             }}
           >
             {" "}
-            <h4>Target Unit</h4>
-            <h4>Target Unit</h4>
+            <span>Target Unit</span>
+            <span>PCS</span>
           </TableCell>
           <br />
           <TableCell
@@ -133,8 +147,8 @@ export default function Master() {
             }}
           >
             {" "}
-            <h4>Target Unit</h4>
-            <h4>Target Unit</h4>
+            <span>Target Unit</span>
+            <span>PCS</span>
           </TableCell>
           <br />
           <TableCell
@@ -145,8 +159,8 @@ export default function Master() {
             }}
           >
             {" "}
-            <h4>Target Unit</h4>
-            <h4>Target Unit</h4>
+            <span>Target Unit</span>
+            <span>PCS</span>
           </TableCell>
           <br />
           <TableCell
@@ -157,8 +171,8 @@ export default function Master() {
             }}
           >
             {" "}
-            <h4>Target Unit</h4>
-            <h4>Target Unit</h4>
+            <span>Target Unit</span>
+            <span>PCS</span>
           </TableCell>
           <br />
           <TableCell
@@ -169,8 +183,8 @@ export default function Master() {
             }}
           >
             {" "}
-            <h4>Target Unit</h4>
-            <h4>Target Unit</h4>
+            <span>Target Unit</span>
+            <span>PCS</span>
           </TableCell>
         </DialogContent>
       </Dialog>
@@ -237,7 +251,16 @@ export default function Master() {
           }}
         >
           <Button
-            style={{ padding: ".7%", paddingInline: "2%", backgroundColor: "#04184B" }}
+            onClick={() => {
+              setOpenSnackBar(true);
+              setSeverity("info");
+              setMessage("Successfully drafted new prices.");
+            }}
+            style={{
+              padding: ".7%",
+              paddingInline: "2%",
+              backgroundColor: "#04184B",
+            }}
             variant="contained"
             endIcon={<FormatListBulletedIcon />}
           >

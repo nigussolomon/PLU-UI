@@ -10,6 +10,7 @@ import { rows, rows2 } from "../mock/Data";
 import DataSourceDialog from "../components/dialogs/dataSource";
 import Details from "../components/dialogs/details";
 import UploadedData from "../components/dialogs/uploadedData";
+import AlertMessage from "../components/dialogs/alert";
 
 export default function Home({ source, setSource }) {
   const [open, setOpen] = React.useState(false);
@@ -23,6 +24,9 @@ export default function Home({ source, setSource }) {
   const [files, setFiles] = React.useState();
   const [fileData, setFileData] = React.useState([]);
   const [fileDataHead, setFileDataHead] = React.useState([]);
+  const [openSnackBar, setOpenSnackBar] = React.useState(false);
+  const [severity, setSeverity] = React.useState("error");
+  const [message, setMessage] = React.useState("Test Message");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -86,9 +90,7 @@ export default function Home({ source, setSource }) {
               }
               style={{
                 backgroundColor:
-                  params.row.status === "Pending"
-                    ? "#04184B"
-                    : null,
+                  params.row.status === "Pending" ? "#04184B" : null,
               }}
               variant="contained"
             >
@@ -133,11 +135,21 @@ export default function Home({ source, setSource }) {
     return null;
   };
 
+  const closeSnackbar = () => {
+    setOpenSnackBar(false);
+  }
+
   return (
     <div
       className="home"
       style={{ width: "95vw", marginLeft: "3.5vw", marginTop: "8vh" }}
     >
+      <AlertMessage
+        openSnackBar={openSnackBar}
+        severity={severity}
+        message={message}
+        closeSnackbar={closeSnackbar}
+      />
       <DataSourceDialog
         open={open}
         handleClose={handleClose}
@@ -160,6 +172,9 @@ export default function Home({ source, setSource }) {
         getCellStyles={getCellStyles}
         setDisabled={setDisabled}
         setDummyRow={setDummyRow}
+        setSeverity={setSeverity}
+        setOpenSnackBar={setOpenSnackBar}
+        setMessage={setMessage}
       />
       <UploadedData
         open2={open2}
@@ -178,7 +193,9 @@ export default function Home({ source, setSource }) {
           Price List Drafts
         </Typography>
         <Typography style={{ margin: "1%", fontWeight: 900 }} variant="h5">
-          {localStorage.getItem("source") ? localStorage.getItem("source") : "Drafts"}
+          {localStorage.getItem("source")
+            ? localStorage.getItem("source")
+            : "Drafts"}
         </Typography>
       </div>
       <div
@@ -230,6 +247,7 @@ export default function Home({ source, setSource }) {
             <MenuItem value="source2">INTERNAL UPDATE</MenuItem>
             <MenuItem value="source3">SUPPLIER CATALOG</MenuItem>
             <MenuItem value="source4">NEW ITEM REQUEST</MenuItem>
+            <MenuItem value="source5">SALES ORDER</MenuItem>
           </TextField>
         </div>
         <div className="action" style={{ width: "10%" }}>
