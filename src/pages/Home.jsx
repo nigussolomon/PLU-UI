@@ -28,6 +28,11 @@ export default function Home({ source, setSource }) {
   const [message, setMessage] = React.useState("Test Message");
   const [row, setRow] = React.useState([]);
   const [docId, setDocId] = React.useState();
+  const [supplierFilter, setSupplierFilter] = React.useState();
+  const [statusFilter, setStatusFilter] = React.useState();
+  const [suppliers, setSuppliers] = React.useState([]);
+  const [tmpList, setTempList] = React.useState([]);
+  const [filteredRows, setFilteredRows] = React.useState([]);
 
   // use the built in react useeffect function to fetch supplier documnets from localhost:3000/supplier_documents
   React.useEffect(() => {
@@ -35,6 +40,14 @@ export default function Home({ source, setSource }) {
       .then((res) => res.json())
       .then((data) => {
         setRow(data["data"]);
+        console.log(data);
+        setTempList(data["data"]);
+      });
+
+    fetch("http://localhost:3000/suppliers")
+      .then((res) => res.json())
+      .then((data) => {
+        setSuppliers(data["data"]);
       });
   }, []);
 
@@ -45,6 +58,29 @@ export default function Home({ source, setSource }) {
         setDummyRow(data["data"]);
       });
   };
+
+  React.useEffect(() => {
+    // Helper function to filter rows based on supplier ID and status
+    const filterRows = () => {
+      let filteredData = tmpList;
+
+      if (supplierFilter) {
+        filteredData = filteredData.filter(
+          (item) => item.supplier.id === supplierFilter
+        );
+      }
+
+      if (statusFilter) {
+        filteredData = filteredData.filter(
+          (item) => item.status === statusFilter
+        );
+      }
+
+      setFilteredRows(filteredData);
+    };
+
+    filterRows();
+  }, [supplierFilter, statusFilter, tmpList]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -73,9 +109,29 @@ export default function Home({ source, setSource }) {
 
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
-    return date.toLocaleDateString(); // Adjust the date format based on your preference
+    return date.toLocaleDateString();
   };
 
+  const handleFiltering = async (id, status) => {
+    if (id !== "") {
+      const temp = await tmpList.filter((item) => item.supplier.id === id);
+      await setRow(temp);
+      if (status !== "") {
+        const temp = await row.filter((item) => item.status === status);
+        console.log(temp);
+        await setRow(temp);
+      }
+    } else if (status !== "") {
+      console.log(row);
+      const temp = await row.filter((item) => item.status === status);
+      console.log(temp);
+      await setRow(temp);
+      if (id !== "") {
+        const temp = await tmpList.filter((item) => item.supplier.id === id);
+        await setRow(temp);
+      }
+    }
+  };
   const columns = [
     {
       field: "id",
@@ -197,8 +253,18 @@ export default function Home({ source, setSource }) {
       headerName: "Supplier Document ID",
       width: 200,
     },
-    { field: "created_at", headerName: "Created At", width: 200 },
-    { field: "updated_at", headerName: "Updated At", width: 200 },
+    {
+      field: "created_at",
+      headerName: "Created At",
+      width: 200,
+      valueGetter: (params) => formatDate(params.row.created_at),
+    },
+    {
+      field: "updated_at",
+      headerName: "Updated At",
+      width: 200,
+      valueGetter: (params) => formatDate(params.row.updated_at),
+    },
   ];
 
   const [dummyRow, setDummyRow] = React.useState([]);
@@ -290,46 +356,52 @@ export default function Home({ source, setSource }) {
         <div
           className="fields"
           style={{
-            width: "54%",
+            width: "34%",
             display: "flex",
             justifyContent: "space-between",
           }}
         >
           <TextField
             select
-            style={{ width: "30%" }}
+            value={supplierFilter || ''}
+            style={{ width: "40%" }}
             label="Supplier"
             variant="outlined"
+            onChange={async (e) => {
+              setSupplierFilter(e.target.value);
+            }}
           >
-            <MenuItem value="supplier1">Supplier 1</MenuItem>
-            <MenuItem value="supplier2">Supplier 2</MenuItem>
-            <MenuItem value="supplier3">Supplier 3</MenuItem>
-            <MenuItem value="supplier4">Supplier 4</MenuItem>
-            <MenuItem value="supplier5">Supplier 5</MenuItem>
+            {suppliers.map((supplier) => (
+              <MenuItem key={supplier.id} value={supplier.id}>
+                {supplier.name}
+              </MenuItem>
+            ))}
           </TextField>
           <TextField
             select
-            style={{ width: "30%" }}
+            value={statusFilter || ''}
+            style={{ width: "40%" }}
             label="Status"
             variant="outlined"
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+            }}
           >
-            <MenuItem value="status1">Approved</MenuItem>
-            <MenuItem value="status2">Pending</MenuItem>
-            <MenuItem value="status3">Draft</MenuItem>
-            <MenuItem value="status4">Archived</MenuItem>
+            <MenuItem value="approved">Approved</MenuItem>
+            <MenuItem value="pending">Pending</MenuItem>
+            <MenuItem value="drafted">Draft</MenuItem>
+            <MenuItem value="archived">Archived</MenuItem>
           </TextField>
-          <TextField
-            select
-            style={{ width: "30%" }}
-            label="Source"
+          <Button
+            onClick={() => {
+              setSupplierFilter("");
+              setStatusFilter("");
+            }}
             variant="outlined"
+            color="error"
           >
-            <MenuItem value="source1">BO API</MenuItem>
-            <MenuItem value="source2">INTERNAL UPDATE</MenuItem>
-            <MenuItem value="source3">SUPPLIER CATALOG</MenuItem>
-            <MenuItem value="source4">NEW ITEM REQUEST</MenuItem>
-            <MenuItem value="source5">SALES ORDER</MenuItem>
-          </TextField>
+            CLEAR
+          </Button>
         </div>
         <div className="action" style={{ width: "10%" }}>
           <Button
@@ -366,7 +438,7 @@ export default function Home({ source, setSource }) {
               stroke: "white",
             },
           }}
-          rows={row}
+          rows={filteredRows}
           columns={columns}
           initialState={{
             pagination: {

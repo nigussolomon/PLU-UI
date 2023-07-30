@@ -6,6 +6,8 @@ import Slide from "@mui/material/Slide";
 import Button from "@mui/material/Button";
 import { DataGrid } from "@mui/x-data-grid";
 import DialogActions from "@mui/material/DialogActions";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -19,6 +21,74 @@ export default function UploadedData({
   getCellStyles,
   handleClose2,
 }) {
+  const [suppliers, setSuppliers] = React.useState([]);
+  const [supplierFilter, setSupplierFilter] = React.useState();
+
+  // use the built in react useeffect function to fetch supplier documnets from localhost:3000/supplier_documents
+  React.useEffect(() => {
+    fetch("http://localhost:3000/suppliers")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setSuppliers(data["data"]);
+      });
+  }, []);
+  const [loading, setLoading] = React.useState(false);
+  const SaveDocument = async (file) => {
+    setLoading(true);
+    const randomNum = Math.floor(Math.random() * 10000);
+    const sup_doc_res = await fetch(
+      "http://localhost:3000/supplier_documents",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          payload: {
+            reference_no: `REF-${randomNum}`,
+            effective_date: new Date().toISOString().split("T")[0],
+            supplier_id: supplierFilter,
+          },
+        }),
+      }
+    );
+
+    const sup_doc = await sup_doc_res.json();
+
+    if (sup_doc.success) {
+      for (const data of fileData) {
+        console.log(data);
+        const response = await fetch(
+          "http://localhost:3000/supplier_item_requests",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              payload: {
+                item_code: data["col0"],
+                item_description: data["col1"],
+                dimensions: data["col2"],
+                price_per_pc: data["col3"],
+                base_unit: data["col4"],
+                target_unit: data["col5"],
+                currency: data["col7"],
+                supplier_document_id: sup_doc.data.id,
+                valid_from: new Date().toISOString().split("T")[0],
+                valid_to: new Date().toISOString().split("T")[0],
+              },
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to create supplier document");
+        }
+      }
+    }
+  };
   return (
     <Dialog
       open={open2}
@@ -37,9 +107,26 @@ export default function UploadedData({
         style={{ fontSize: "30px", textAlign: "left", fontWeight: 900 }}
       >
         {curRef}
+        <TextField
+          select
+          value={supplierFilter}
+          style={{ width: "30%" }}
+          label="Supplier"
+          variant="outlined"
+          onChange={(e) => {
+            setSupplierFilter(e.target.value);
+          }}
+        >
+          {suppliers.map((supplier, index) => (
+            <MenuItem key={index} value={supplier.id}>
+              {supplier.name}
+            </MenuItem>
+          ))}
+        </TextField>
       </DialogTitle>
       <DialogContent style={{ width: "97.5vw", minWidth: "97.5vw" }}>
         <DataGrid
+          loading={loading}
           sx={{
             "& .MuiDataGrid-columnHeaders": {
               backgroundColor: "#04184B",
@@ -73,10 +160,13 @@ export default function UploadedData({
             CANCEL
           </Button>
           <Button
+            disabled={supplierFilter === undefined || supplierFilter === "" ? true : loading}
             style={{ padding: ".5%", paddingInline: "2.5%" }}
             color="secondary"
             variant="contained"
-            onClick={() => {
+            onClick={async () => {
+              await SaveDocument();
+              setLoading(false);
               handleClose2();
             }}
           >
