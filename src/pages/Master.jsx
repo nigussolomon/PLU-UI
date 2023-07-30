@@ -9,7 +9,6 @@ import DialogContent from "@mui/material/DialogContent";
 import Slide from "@mui/material/Slide";
 import Typography from "@mui/material/Typography";
 import { DataGrid } from "@mui/x-data-grid";
-import { rows2 } from "../mock/Data";
 import TableCell from "@mui/material/TableCell";
 import AlertMessage from "../components/dialogs/alert";
 
@@ -18,10 +17,76 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function Master() {
+  function isNowOrWithinThreeDays(timestamp) {
+    const now = new Date();
+    const targetDate = new Date(timestamp);
+    const differenceInMs = Math.abs(targetDate - now);
+    const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
+    return differenceInMs <= threeDaysInMs;
+  }
+
   const [open, setOpen] = React.useState(false);
   const [openSnackBar, setOpenSnackBar] = React.useState(false);
   const [severity, setSeverity] = React.useState("error");
   const [message, setMessage] = React.useState("Test Message");
+  const [row, setRow] = React.useState([]);
+  const [data, setData] = React.useState([]);
+
+  const SaveDocument = async (file) => {
+    const randomNum = Math.floor(Math.random() * 10000);
+    const sup_doc_res = await fetch(
+      "http://localhost:3000/supplier_documents",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          payload: {
+            reference_no: `REF-${randomNum}`,
+            effective_date: new Date().toISOString().split("T")[0],
+            supplier_id: 1,
+          },
+        }),
+      }
+    );
+
+    const sup_doc = await sup_doc_res.json();
+    if (sup_doc.success) {
+      for (const dat of data) {
+        const response = await fetch(
+          "http://localhost:3000/supplier_item_requests",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              payload: {
+                item_code: dat["data"]["item_code"],
+                item_description: dat["data"]["item_description"],
+                dimensions:
+                  dat["data"]["dimension"]["length"] +
+                  "x" +
+                  dat["data"]["dimension"]["width"] +
+                  "x" +
+                  dat["data"]["dimension"]["height"],
+                price_per_pc: dat["price"],
+                base_unit: dat["data"]["base_unit"]["unit"],
+                target_unit: dat["data"]["base_unit"]["unit"],
+                currency: "EUR",
+                supplier_document_id: sup_doc.data.id,
+                valid_from: new Date().toISOString().split("T")[0],
+                valid_to: new Date().toISOString().split("T")[0],
+              },
+            }),
+          }
+        );
+        const res = await response.json();
+        console.log(res);
+      }
+    }
+  };
 
   const closeSnackbar = () => {
     setOpenSnackBar(false);
@@ -37,9 +102,81 @@ export default function Master() {
   const columns = [
     { field: "id", headerName: "No", width: 70 },
     { field: "item_code", headerName: "Item Code", width: 180 },
+    { field: "decor_code", headerName: "Decor Code", width: 180 },
+    { field: "item_name", headerName: "Item Name", width: 180 },
     { field: "item_description", headerName: "Item Description", width: 280 },
-    { field: "dimensions", headerName: "Dimensions", width: 180 },
-    { field: "price_per_pc", headerName: "Price Per PC", width: 150 },
+    {
+      field: "dimensions",
+      headerName: "Dimensions",
+      width: 180,
+      renderCell: (params) => {
+        return (
+          <div>
+            {params.row.dimension.length +
+              "x" +
+              params.row.dimension.width +
+              "x" +
+              params.row.dimension.height}
+          </div>
+        );
+      },
+    },
+    {
+      field: "purchase price",
+      headerName: "Purchase Price",
+      width: 150,
+      renderCell: (params) => {
+        return (
+          <div>{params.row.main_item_pricing.pricing.new_purchase_price}</div>
+        );
+      },
+    },
+
+    {
+      field: "selling price",
+      headerName: "Selling Price",
+      width: 150,
+      renderCell: (params) => {
+        return (
+          <div
+            style={{
+              width: "60%",
+              height: "60%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "10px",
+              background: isNowOrWithinThreeDays(
+                params.row.main_item_pricing.pricing.updated_at
+              )
+                ? "purple"
+                : "",
+              color: isNowOrWithinThreeDays(
+                params.row.main_item_pricing.pricing.updated_at
+              )
+                ? "white"
+                : "",
+              fontWeight: isNowOrWithinThreeDays(
+                params.row.main_item_pricing.pricing.updated_at
+              )
+                ? 900
+                : "normal",
+            }}
+          >
+            {params.row.main_item_pricing.pricing.new_retail_price}
+          </div>
+        );
+      },
+    },
+
+    {
+      field: "base_unit",
+      headerName: "Base Unit",
+      width: 120,
+      renderCell: (params) => {
+        return <div>{params.row.base_unit.unit}</div>;
+      },
+    },
     {
       field: "new_price",
       headerName: "New Price",
@@ -48,18 +185,41 @@ export default function Master() {
       renderCell: (params) => {
         return (
           <TextField
+            value={
+              data.find((item) => item.item_code === params.row.item_code)
+                ?.price || ""
+            }
             style={{ width: 190 }}
             label="New Price"
             variant="standard"
+            onChange={(e) => {
+              const newItemCode = params.row.item_code;
+              const newPrice = e.target.value;
+              const newData = [...data];
+              const indexToUpdate = newData.findIndex(
+                (item) => item.item_code === newItemCode
+              );
+
+              if (indexToUpdate !== -1) {
+                newData[indexToUpdate] = {
+                  ...newData[indexToUpdate],
+                  price: newPrice,
+                  data: params.row,
+                };
+              } else {
+                newData.push({
+                  item_code: newItemCode,
+                  price: newPrice,
+                  data: params.row,
+                });
+              }
+              setData(newData);
+              console.log(newData);
+            }}
           />
         );
       },
     },
-    { field: "base_unit", headerName: "Base Unit", width: 120 },
-    { field: "target_unit", headerName: "Target Unit", width: 120 },
-    { field: "currency", headerName: "Currency", width: 120 },
-    { field: "created_at", headerName: "Created At", width: 160 },
-    { field: "updated_at", headerName: "Updated At", width: 160 },
     {
       field: "actions",
       headerName: "Actions",
@@ -80,6 +240,14 @@ export default function Master() {
       },
     },
   ];
+
+  React.useEffect(() => {
+    fetch("http://localhost:3000/items")
+      .then((res) => res.json())
+      .then((data) => {
+        setRow(data["data"]);
+      });
+  }, []);
 
   return (
     <div style={{ margin: "3.5vw", width: "95vw" }}>
@@ -233,7 +401,7 @@ export default function Master() {
               stroke: "white",
             },
           }}
-          rows={rows2}
+          rows={row}
           columns={columns}
           initialState={{
             pagination: {
@@ -251,7 +419,8 @@ export default function Master() {
           }}
         >
           <Button
-            onClick={() => {
+            onClick={async () => {
+              await SaveDocument();
               setOpenSnackBar(true);
               setSeverity("info");
               setMessage("Successfully drafted new prices.");

@@ -112,26 +112,6 @@ export default function Home({ source, setSource }) {
     return date.toLocaleDateString();
   };
 
-  const handleFiltering = async (id, status) => {
-    if (id !== "") {
-      const temp = await tmpList.filter((item) => item.supplier.id === id);
-      await setRow(temp);
-      if (status !== "") {
-        const temp = await row.filter((item) => item.status === status);
-        console.log(temp);
-        await setRow(temp);
-      }
-    } else if (status !== "") {
-      console.log(row);
-      const temp = await row.filter((item) => item.status === status);
-      console.log(temp);
-      await setRow(temp);
-      if (id !== "") {
-        const temp = await tmpList.filter((item) => item.supplier.id === id);
-        await setRow(temp);
-      }
-    }
-  };
   const columns = [
     {
       field: "id",
@@ -363,7 +343,7 @@ export default function Home({ source, setSource }) {
         >
           <TextField
             select
-            value={supplierFilter || ''}
+            value={supplierFilter || ""}
             style={{ width: "40%" }}
             label="Supplier"
             variant="outlined"
@@ -379,7 +359,7 @@ export default function Home({ source, setSource }) {
           </TextField>
           <TextField
             select
-            value={statusFilter || ''}
+            value={statusFilter || ""}
             style={{ width: "40%" }}
             label="Status"
             variant="outlined"

@@ -10,6 +10,131 @@ import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 
 export default function FormulaSetup() {
+  const [suppliers, setSuppliers] = React.useState([]);
+  const [formulas, setFormulas] = React.useState([]);
+  const [formulas2, setFormulas2] = React.useState([]);
+  const [supplierFilter, setSupplierFilter] = React.useState("");
+  const [label, setLabel] = React.useState("");
+  const [labelAlt, setLabelAlt] = React.useState("");
+  const [margin, setMargin] = React.useState("");
+  const [marginAlt, setMarginAlt] = React.useState("");
+  const [formula, setFormula] = React.useState("");
+  const [customers, setCustomers] = React.useState([]);
+  const [customerFilter, setCustomerFilter] = React.useState([]);
+  const [discount, setDiscount] = React.useState("");
+  const [discountAlt, setDiscountAlt] = React.useState();
+
+  const addFormula = async () => {
+    const res = await fetch("http://localhost:3000/supplier_formulas", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        payload: {
+          supplier_id: supplierFilter,
+          label: label,
+          margin: margin,
+          active: true,
+        },
+      }),
+    });
+    const data = await res.json();
+    console.log(data);
+  };
+
+  const addFormula2 = async () => {
+    const res = await fetch("http://localhost:3000/customer_formulas", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        payload: {
+          customer_id: customerFilter,
+          label: labelAlt,
+          formula: discount,
+          active: true,
+        },
+      }),
+    });
+    const data = await res.json();
+    console.log(data);
+  };
+
+  const updateFormula = async () => {
+    const res = await fetch(
+      "http://localhost:3000/supplier_formulas/" + formula,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          payload: {
+            margin: marginAlt,
+          },
+        }),
+      }
+    );
+    const data = await res.json();
+    console.log(data);
+  };
+
+  const updateFormula2 = async () => {
+    const res = await fetch(
+      "http://localhost:3000/supplier_formulas/" + formula,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          payload: {
+            formula: discountAlt,
+          },
+        }),
+      }
+    );
+    const data = await res.json();
+    console.log(data);
+  };
+
+  React.useEffect(() => {
+    fetch("http://localhost:3000/suppliers")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setSuppliers(data["data"]);
+      });
+  }, []);
+
+  React.useEffect(() => {
+    fetch("http://localhost:3000/customers")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setCustomers(data["data"]);
+      });
+  }, []);
+
+  React.useEffect(() => {
+    fetch("http://localhost:3000/supplier_formulas")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setFormulas(data["data"]);
+      });
+  }, []);
+
+  React.useEffect(() => {
+    fetch("http://localhost:3000/customer_formulas")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setFormulas2(data["data"]);
+      });
+  }, []);
   return (
     <>
       <NavBar></NavBar>
@@ -27,23 +152,38 @@ export default function FormulaSetup() {
           <AccordionDetails>
             <div className="suppFormula" style={{ display: "flex" }}>
               <TextField
-                sx={{ width: "250px" }}
                 select
-                variant="outlined"
+                value={supplierFilter || ""}
+                style={{ width: "250px" }}
                 label="Supplier"
+                variant="outlined"
+                onChange={async (e) => {
+                  setSupplierFilter(e.target.value);
+                }}
               >
-                <MenuItem value="supplier1">Supplier 1</MenuItem>
-                <MenuItem value="supplier2">Supplier 2</MenuItem>
-                <MenuItem value="supplier3">Supplier 3</MenuItem>
-                <MenuItem value="supplier4">Supplier 4</MenuItem>
-                <MenuItem value="supplier5">Supplier 5</MenuItem>
+                {suppliers.map((supplier) => (
+                  <MenuItem key={supplier.id} value={supplier.id}>
+                    {supplier.name}
+                  </MenuItem>
+                ))}
               </TextField>
               <div className="space" style={{ width: "15px" }}></div>
-              <TextField variant="outlined" label="Formula Label"></TextField>
+              <TextField
+                value={label || ""}
+                onChange={(e) => setLabel(e.target.value)}
+                variant="outlined"
+                label="Formula Label"
+              ></TextField>
               <div className="space" style={{ width: "15px" }}></div>
-              <TextField variant="outlined" label="Margin"></TextField>
+              <TextField
+                value={margin || ""}
+                onChange={(e) => setMargin(e.target.value)}
+                variant="outlined"
+                label="Margin"
+              ></TextField>
               <div className="space" style={{ width: "15px" }}></div>
               <Button
+                onClick={addFormula}
                 variant="contained"
                 color="success"
                 style={{ paddingInline: "3%" }}
@@ -54,21 +194,31 @@ export default function FormulaSetup() {
             <br />
             <div className="suppFormula" style={{ display: "flex" }}>
               <TextField
-                sx={{ width: "250px" }}
                 select
-                variant="outlined"
+                value={formula || ""}
+                style={{ width: "250px" }}
                 label="Formula Label"
+                variant="outlined"
+                onChange={async (e) => {
+                  setFormula(e.target.value);
+                }}
               >
-                <MenuItem value="formula1">Formula 1</MenuItem>
-                <MenuItem value="formula2">Formula 2</MenuItem>
-                <MenuItem value="formula3">Formula 3</MenuItem>
-                <MenuItem value="formula4">Formula 4</MenuItem>
-                <MenuItem value="formula5">Formula 5</MenuItem>
+                {formulas.map((formula) => (
+                  <MenuItem key={formula.id} value={formula.id}>
+                    {formula.label}
+                  </MenuItem>
+                ))}
               </TextField>
               <div className="space" style={{ width: "15px" }}></div>
-              <TextField variant="outlined" label="Margin"></TextField>
+              <TextField
+                value={marginAlt || ""}
+                onChange={(e) => setMarginAlt(e.target.value)}
+                variant="outlined"
+                label="Margin"
+              ></TextField>
               <div className="space" style={{ width: "15px" }}></div>
               <Button
+                onClick={updateFormula}
                 variant="contained"
                 color="secondary"
                 style={{ paddingInline: "3%" }}
@@ -84,28 +234,47 @@ export default function FormulaSetup() {
             aria-controls="panel2a-content"
             id="panel2a-header"
           >
-            <Typography>Customer Discount Formula</Typography>
+            <Typography>CUSTOMER DISCOUNT SETUP</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <div className="cusFormula" style={{ display: "flex" }}>
               <TextField
-                sx={{ width: "250px" }}
                 select
-                variant="outlined"
+                value={customerFilter || ""}
+                style={{ width: "250px" }}
                 label="Customer"
+                variant="outlined"
+                onChange={async (e) => {
+                  setCustomerFilter(e.target.value);
+                }}
               >
-                <MenuItem value="customer1">Customer 1</MenuItem>
-                <MenuItem value="customer2">Customer 2</MenuItem>
-                <MenuItem value="customer3">Customer 3</MenuItem>
-                <MenuItem value="customer4">Customer 4</MenuItem>
-                <MenuItem value="customer5">Customer 5</MenuItem>
+                {customers.map((customer) => (
+                  <MenuItem key={customer.id} value={customer.id}>
+                    {customer.name}
+                  </MenuItem>
+                ))}
               </TextField>
               <div className="space" style={{ width: "15px" }}></div>
-              <TextField variant="outlined" label="Formula Label"></TextField>
+              <TextField
+                value={labelAlt}
+                onChange={(e) => {
+                  setLabelAlt(e.target.value);
+                }}
+                variant="outlined"
+                label="Formula Label"
+              ></TextField>
               <div className="space" style={{ width: "15px" }}></div>
-              <TextField variant="outlined" label="Discount"></TextField>
+              <TextField
+                value={discount}
+                onChange={(e) => {
+                  setDiscount(e.target.value);
+                }}
+                variant="outlined"
+                label="Discount"
+              ></TextField>
               <div className="space" style={{ width: "15px" }}></div>
               <Button
+                onClick={addFormula2}
                 variant="contained"
                 color="success"
                 style={{ paddingInline: "3%" }}
@@ -116,21 +285,33 @@ export default function FormulaSetup() {
             <br />
             <div className="cusFormula" style={{ display: "flex" }}>
               <TextField
-                sx={{ width: "250px" }}
                 select
-                variant="outlined"
+                value={formula || ""}
+                style={{ width: "250px" }}
                 label="Formula Label"
+                variant="outlined"
+                onChange={async (e) => {
+                  setFormula(e.target.value);
+                }}
               >
-                <MenuItem value="formula1">Formula 1</MenuItem>
-                <MenuItem value="formula2">Formula 2</MenuItem>
-                <MenuItem value="formula3">Formula 3</MenuItem>
-                <MenuItem value="formula4">Formula 4</MenuItem>
-                <MenuItem value="formula5">Formula 5</MenuItem>
+                {formulas2.map((formula) => (
+                  <MenuItem key={formula.id} value={formula.id}>
+                    {formula.label}
+                  </MenuItem>
+                ))}
               </TextField>
               <div className="space" style={{ width: "15px" }}></div>
-              <TextField variant="outlined" label="Discount"></TextField>
+              <TextField
+                value={discountAlt}
+                onChange={(e) => {
+                  setDiscountAlt(e.target.value);
+                }}
+                variant="outlined"
+                label="Discount"
+              ></TextField>
               <div className="space" style={{ width: "15px" }}></div>
               <Button
+                onClick={updateFormula2}
                 variant="contained"
                 color="secondary"
                 style={{ paddingInline: "3%" }}
