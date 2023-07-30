@@ -74,7 +74,7 @@ export default function SalesOrder() {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://192.168.1.10:8000/so_items?po_login_code=${code}&user_full_name=maveko_plu_module}`,
+        `http://0.0.0.0:8000/so_items?po_login_code=${code}&user_full_name=maveko_plu_module}`,
         {
           method: "GET",
           headers: {

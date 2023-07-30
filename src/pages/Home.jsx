@@ -6,7 +6,6 @@ import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import Typography from "@mui/material/Typography";
 import { DataGrid } from "@mui/x-data-grid";
 import MenuItem from "@mui/material/MenuItem";
-import { rows, rows2 } from "../mock/Data";
 import DataSourceDialog from "../components/dialogs/dataSource";
 import Details from "../components/dialogs/details";
 import UploadedData from "../components/dialogs/uploadedData";
@@ -27,6 +26,25 @@ export default function Home({ source, setSource }) {
   const [openSnackBar, setOpenSnackBar] = React.useState(false);
   const [severity, setSeverity] = React.useState("error");
   const [message, setMessage] = React.useState("Test Message");
+  const [row, setRow] = React.useState([]);
+  const [docId, setDocId] = React.useState();
+
+  // use the built in react useeffect function to fetch supplier documnets from localhost:3000/supplier_documents
+  React.useEffect(() => {
+    fetch("http://localhost:3000/supplier_documents")
+      .then((res) => res.json())
+      .then((data) => {
+        setRow(data["data"]);
+      });
+  }, []);
+
+  const fetchSDItems = (id) => {
+    fetch("http://localhost:3000/supplier_documents/" + id)
+      .then((res) => res.json())
+      .then((data) => {
+        setDummyRow(data["data"]);
+      });
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -53,44 +71,107 @@ export default function Home({ source, setSource }) {
     setOpen1(true);
   };
 
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toLocaleDateString(); // Adjust the date format based on your preference
+  };
+
   const columns = [
-    { field: "id", headerName: "ID", width: 70 },
+    {
+      field: "id",
+      headerName: "ID",
+      headerAlign: "center",
+      align: "center",
+      width: 70,
+    },
     { field: "reference_no", headerName: "Reference No", width: 180 },
-    { field: "supplier_name", headerName: "Supplier Name", width: 250 },
-    { field: "created_at", headerName: "Created At", width: 235 },
-    { field: "updated_at", headerName: "Updated At", width: 235 },
-    { field: "status", headerName: "Status", width: 220 },
-    { field: "effective_date", headerName: "Effective Date", width: 280 },
-    { field: "assigned_user", headerName: "Assigned User", width: 200 },
+    {
+      field: "supplier",
+      headerName: "Supplier Name",
+      headerAlign: "center",
+      align: "center",
+      width: 250,
+      valueGetter: (params) => params.row.supplier.name,
+    },
+    {
+      field: "created_at",
+      headerName: "Created At",
+      headerAlign: "center",
+      align: "center",
+      width: 235,
+      valueGetter: (params) => formatDate(params.row.created_at),
+    },
+    {
+      field: "updated_at",
+      headerName: "Updated At",
+      headerAlign: "center",
+      align: "center",
+      width: 235,
+      valueGetter: (params) => formatDate(params.row.updated_at),
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      headerAlign: "center",
+      width: 220,
+      renderCell: (params) => (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            background:
+              params.row.status === "approved"
+                ? "green"
+                : params.row.status === "archived"
+                ? "red"
+                : params.row.status === "drafted"
+                ? "blue"
+                : "orange",
+            color: "#fff",
+            textTransform: "uppercase",
+            fontWeight: 900,
+            padding: "5px",
+            width: "100%",
+            height: "100%",
+            textAlign: "center",
+            alignItems: "center",
+          }}
+        >
+          {params.row.status}
+        </div>
+      ),
+    },
+    {
+      field: "effective_date",
+      headerName: "Effective Date",
+      headerAlign: "center",
+      align: "center",
+      width: 280,
+      valueGetter: (params) => formatDate(params.row.effective_date),
+    },
     {
       field: "actions",
       headerName: "Actions",
+      headerAlign: "center",
+      align: "center",
       width: 100,
       sortable: false,
       renderCell: (params) => {
-        const handleActionClick = (event) => {
+        const handleActionClick = async (event) => {
+          setDocId(params.row.id);
+          fetchSDItems(params.row.id);
           event.stopPropagation();
           setCurRef(params.row.reference_no);
-          params.row.status === "Approved"
-            ? setCurRef(params.row.reference_no)
-            : handleClickOpen1();
+          handleClickOpen1();
           setStatus(params.row.status);
-          setSupplier(params.row.supplier_name);
+          setSupplier(params.row.supplier.name);
           setDate(params.row.effective_date);
         };
         return (
           <div onClick={handleActionClick} style={{ display: "flex" }}>
             <Button
-              disabled={params.row.status === "Approved" ? disabled : null}
-              color={
-                params.row.status === "Approved" ||
-                params.row.status === "Drafted"
-                  ? "success"
-                  : "primary"
-              }
               style={{
-                backgroundColor:
-                  params.row.status === "Pending" ? "#04184B" : null,
+                background: "#04184B",
               }}
               variant="contained"
             >
@@ -120,11 +201,10 @@ export default function Home({ source, setSource }) {
     { field: "updated_at", headerName: "Updated At", width: 200 },
   ];
 
-  const [dummyRow, setDummyRow] = React.useState(rows2);
+  const [dummyRow, setDummyRow] = React.useState([]);
   const handleClose1 = () => {
     setOpen1(false);
     setDisabled(true);
-    setDummyRow(rows2);
   };
 
   const getCellStyles = (params) => {
@@ -137,7 +217,7 @@ export default function Home({ source, setSource }) {
 
   const closeSnackbar = () => {
     setOpenSnackBar(false);
-  }
+  };
 
   return (
     <div
@@ -160,6 +240,7 @@ export default function Home({ source, setSource }) {
         handleClickOpen2={handleClickOpen2}
       />
       <Details
+        docId={docId}
         open1={open1}
         curRef={curRef}
         supplier={supplier}
@@ -285,7 +366,7 @@ export default function Home({ source, setSource }) {
               stroke: "white",
             },
           }}
-          rows={rows}
+          rows={row}
           columns={columns}
           initialState={{
             pagination: {
@@ -293,7 +374,6 @@ export default function Home({ source, setSource }) {
             },
           }}
           pageSizeOptions={[5, 10, 15, 20, 25]}
-          checkboxSelection
         />
       </div>
     </div>

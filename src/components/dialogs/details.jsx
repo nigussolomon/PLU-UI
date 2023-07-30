@@ -6,13 +6,13 @@ import Slide from "@mui/material/Slide";
 import Button from "@mui/material/Button";
 import { DataGrid } from "@mui/x-data-grid";
 import DialogActions from "@mui/material/DialogActions";
-import { rows2 } from "../../mock/Data";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export default function Details({
+  docId,
   open1,
   curRef,
   supplier,
@@ -29,6 +29,27 @@ export default function Details({
   setSeverity,
   setMessage,
 }) {
+  const updateRec = (status) => {
+    fetch("http://localhost:3000/supplier_documents/" + docId, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        payload: {
+          status: status,
+        },
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setSeverity(status === "approved" ? "success" : "info");
+        setMessage(`${curRef} ${status} Successfully!`);
+        setOpenSnackBar(true);
+        window.location.reload(false)
+      });
+  };
+
   return (
     <Dialog
       open={open1}
@@ -93,12 +114,18 @@ export default function Details({
           >
             CLOSE
           </Button>
-          {status === "Drafted" ? (
+          {status === "drafted" ? (
             <Button
+              disabled={
+                status === "approved" || status === "archived" ? true : false
+              }
               style={{ padding: ".5%", paddingInline: "2.5%" }}
               color="success"
               variant="contained"
-              onClick={handleClose1}
+              onClick={() => {
+                updateRec("approved");
+                handleClose1();
+              }}
             >
               APPROVE & UPDATE
             </Button>
@@ -110,6 +137,7 @@ export default function Details({
                 color="success"
                 variant="contained"
                 onClick={() => {
+                  updateRec("drafted");
                   handleClose1();
                   setSeverity("success");
                   setMessage("Items successfully recorded!");
@@ -119,17 +147,20 @@ export default function Details({
                 ACCEPT & RECORD
               </Button>
               <Button
+                disabled={
+                  status === "approved" || status === "archived" ? true : false
+                }
                 style={{ padding: ".5%", paddingInline: "2.5%" }}
                 color="secondary"
                 variant="contained"
                 onClick={() => {
                   const test = () => {
-                    rows2.forEach((element) => {
+                    dummyRow.forEach((element) => {
                       element["currency"] = "EUR";
                       element["price_per_pc"] = element["price_per_pc"] * 1.1;
                     });
 
-                    return rows2;
+                    return dummyRow;
                   };
                   setDummyRow(test);
                   setDisabled(false);
@@ -143,11 +174,14 @@ export default function Details({
             </>
           )}
           <Button
+            disabled={status === "archived" ? true : false}
             onClick={() => {
+              updateRec("archived");
               handleClose1();
               setSeverity("error");
               setMessage("Items have been archived!");
               setOpenSnackBar(true);
+              window.location.reload(false)
             }}
             style={{ padding: ".5%", paddingInline: "2.5%" }}
             color="error"
