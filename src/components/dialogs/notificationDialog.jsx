@@ -13,7 +13,43 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function NotificationDialog({ open1, setOpen1 }) {
+export default function NotificationDialog({
+  open1,
+  setOpen1,
+  notifications,
+  setNotifications,
+}) {
+  const notFetch = () => {
+    fetch("http://0.0.0.0:3000/notifications/" + 1)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setNotifications(data["data"]);
+      });
+  };
+
+  const notUpdate = (id) => {
+    fetch("http://0.0.0.0:3000/notifications/" + id, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        payload: {
+          status: "read",
+        },
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        notFetch()
+      });
+  };
+
+  React.useEffect(() => {
+    notFetch();
+  }, []);
+
   return (
     <Dialog
       open={open1}
@@ -45,42 +81,20 @@ export default function NotificationDialog({ open1, setOpen1 }) {
       <DialogContent style={{ width: "25vw" }}>
         <div>
           <List>
-            <ListItem style={{ display: "flex" }}>
-              <ListItemText
-                style={{ cursor: "pointer", color: "red" }}
-                onClick={() => {
-                  alert("You clicked a notification!");
-                }}
-                primary={"This is a test Notification"}
-                secondary={
-                  "This the body to this test notification to see how it's gonna be structured"
-                }
-              />
-            </ListItem>
-            <ListItem style={{ display: "flex" }}>
-              <ListItemText
-                style={{ cursor: "pointer", color: "green" }}
-                onClick={() => {
-                  alert("You clicked a notification!");
-                }}
-                primary={"This is a test Notification"}
-                secondary={
-                  "This the body to this test notification to see how it's gonna be structured"
-                }
-              />
-            </ListItem>
-            <ListItem style={{ display: "flex" }}>
-              <ListItemText
-                style={{ cursor: "pointer", color: "green" }}
-                onClick={() => {
-                  alert("You clicked a notification!");
-                }}
-                primary={"This is a test Notification"}
-                secondary={
-                  "This the body to this test notification to see how it's gonna be structured"
-                }
-              />
-            </ListItem>
+            {notifications.map((notification, index) => {
+              return (
+                <ListItem
+                  onClick={() => notUpdate(notification.id)}
+                  style={{ display: "flex" }}
+                >
+                  <ListItemText
+                    style={{ cursor: "pointer" }}
+                    primary={notification.title}
+                    secondary={notification.body}
+                  />
+                </ListItem>
+              );
+            })}
           </List>
         </div>
       </DialogContent>

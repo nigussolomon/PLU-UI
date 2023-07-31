@@ -25,7 +25,7 @@ export default function FormulaSetup() {
   const [discountAlt, setDiscountAlt] = React.useState();
 
   const addFormula = async () => {
-    const res = await fetch("http://localhost:3000/supplier_formulas", {
+    const res = await fetch("http://0.0.0.0:3000/supplier_formulas", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -44,7 +44,7 @@ export default function FormulaSetup() {
   };
 
   const addFormula2 = async () => {
-    const res = await fetch("http://localhost:3000/customer_formulas", {
+    const res = await fetch("http://0.0.0.0:3000/customer_formulas", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -64,7 +64,7 @@ export default function FormulaSetup() {
 
   const updateFormula = async () => {
     const res = await fetch(
-      "http://localhost:3000/supplier_formulas/" + formula,
+      "http://0.0.0.0:3000/supplier_formulas/" + formula,
       {
         method: "PATCH",
         headers: {
@@ -83,7 +83,7 @@ export default function FormulaSetup() {
 
   const updateFormula2 = async () => {
     const res = await fetch(
-      "http://localhost:3000/supplier_formulas/" + formula,
+      "http://0.0.0.0:3000/supplier_formulas/" + formula,
       {
         method: "PATCH",
         headers: {
@@ -101,7 +101,7 @@ export default function FormulaSetup() {
   };
 
   React.useEffect(() => {
-    fetch("http://localhost:3000/suppliers")
+    fetch("http://0.0.0.0:3000/suppliers")
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -110,7 +110,7 @@ export default function FormulaSetup() {
   }, []);
 
   React.useEffect(() => {
-    fetch("http://localhost:3000/customers")
+    fetch("http://0.0.0.0:3000/customers")
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -119,7 +119,7 @@ export default function FormulaSetup() {
   }, []);
 
   React.useEffect(() => {
-    fetch("http://localhost:3000/supplier_formulas")
+    fetch("http://0.0.0.0:3000/supplier_formulas")
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -128,7 +128,7 @@ export default function FormulaSetup() {
   }, []);
 
   React.useEffect(() => {
-    fetch("http://localhost:3000/customer_formulas")
+    fetch("http://0.0.0.0:3000/customer_formulas")
       .then((res) => res.json())
       .then((data) => {
         console.log(data);

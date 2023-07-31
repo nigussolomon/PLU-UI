@@ -30,7 +30,7 @@ import LoyaltyIcon from "@mui/icons-material/Loyalty";
 import FunctionsIcon from "@mui/icons-material/Functions";
 import Avatar from "@mui/material/Avatar";
 import JoinRightIcon from "@mui/icons-material/JoinRight";
-import { deepOrange } from '@mui/material/colors';
+import { deepOrange } from "@mui/material/colors";
 
 const drawerWidth = 340;
 
@@ -103,7 +103,20 @@ export default function NavBar() {
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const [open1, setOpen1] = React.useState(false);
+  const [notifications, setNotifications] = React.useState([]);
 
+  const notFetch = () => {
+    fetch("http://0.0.0.0:3000/notifications/" + 1)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setNotifications(data["data"]);
+      });
+  };
+
+  React.useEffect(() => {
+    notFetch();
+  }, []);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -114,7 +127,12 @@ export default function NavBar() {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <NotificationDialog open1={open1} setOpen1={setOpen1} />
+      <NotificationDialog
+        open1={open1}
+        setOpen1={setOpen1}
+        notifications={notifications}
+        setNotifications={setNotifications}
+      />
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -144,7 +162,16 @@ export default function NavBar() {
               </Typography>
             </div>
             <div className="tail" style={{ width: "fit-content" }}>
-              <Avatar sx={{ bgcolor: deepOrange[500], borderRadius: "10px", boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px;" }} variant="square">NS</Avatar>
+              <Avatar
+                sx={{
+                  bgcolor: deepOrange[500],
+                  borderRadius: "10px",
+                  boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px;",
+                }}
+                variant="square"
+              >
+                NS
+              </Avatar>
             </div>
           </div>
         </Toolbar>
@@ -382,7 +409,9 @@ export default function NavBar() {
           <div className="tailList">
             <ListItem>
               <ListItemButton
-                onClick={() => setOpen1(!open1)}
+                onClick={async () => {
+                  setOpen1(!open1);
+                }}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
@@ -396,7 +425,7 @@ export default function NavBar() {
                     justifyContent: "center",
                   }}
                 >
-                  <Badge badgeContent={3} color="error">
+                  <Badge badgeContent={notifications.length} color="error">
                     <NotificationsNoneIcon style={{ color: "#04184B" }} />
                   </Badge>
                 </ListItemIcon>

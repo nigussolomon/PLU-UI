@@ -26,7 +26,7 @@ export default function UploadedData({
 
   // use the built in react useeffect function to fetch supplier documnets from localhost:3000/supplier_documents
   React.useEffect(() => {
-    fetch("http://localhost:3000/suppliers")
+    fetch("http://0.0.0.0:3000/suppliers")
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -38,7 +38,7 @@ export default function UploadedData({
     setLoading(true);
     const randomNum = Math.floor(Math.random() * 10000);
     const sup_doc_res = await fetch(
-      "http://localhost:3000/supplier_documents",
+      "http://0.0.0.0:3000/supplier_documents",
       {
         method: "POST",
         headers: {
@@ -60,7 +60,7 @@ export default function UploadedData({
       for (const data of fileData) {
         console.log(data);
         const response = await fetch(
-          "http://localhost:3000/supplier_item_requests",
+          "http://0.0.0.0:3000/supplier_item_requests",
           {
             method: "POST",
             headers: {

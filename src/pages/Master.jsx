@@ -34,28 +34,25 @@ export default function Master() {
 
   const SaveDocument = async (file) => {
     const randomNum = Math.floor(Math.random() * 10000);
-    const sup_doc_res = await fetch(
-      "http://localhost:3000/supplier_documents",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    const sup_doc_res = await fetch("http://0.0.0.0:3000/supplier_documents", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        payload: {
+          reference_no: `REF-${randomNum}`,
+          effective_date: new Date().toISOString().split("T")[0],
+          supplier_id: 1,
         },
-        body: JSON.stringify({
-          payload: {
-            reference_no: `REF-${randomNum}`,
-            effective_date: new Date().toISOString().split("T")[0],
-            supplier_id: 1,
-          },
-        }),
-      }
-    );
+      }),
+    });
 
     const sup_doc = await sup_doc_res.json();
     if (sup_doc.success) {
       for (const dat of data) {
         const response = await fetch(
-          "http://localhost:3000/supplier_item_requests",
+          "http://0.0.0.0:3000/supplier_item_requests",
           {
             method: "POST",
             headers: {
@@ -91,24 +88,28 @@ export default function Master() {
   const closeSnackbar = () => {
     setOpenSnackBar(false);
   };
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  // const handleClickOpen = () => {
+  //   setOpen(true);
+  // };
 
   const handleClose = () => {
     setOpen(false);
   };
 
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toLocaleDateString();
+  };
+
   const columns = [
     { field: "id", headerName: "No", width: 70 },
-    { field: "item_code", headerName: "Item Code", width: 180 },
-    { field: "decor_code", headerName: "Decor Code", width: 180 },
-    { field: "item_name", headerName: "Item Name", width: 180 },
+    { field: "item_code", headerName: "Item Code", width: 110 },
+    { field: "decor_code", headerName: "Decor Code", width: 110 },
     { field: "item_description", headerName: "Item Description", width: 280 },
     {
       field: "dimensions",
       headerName: "Dimensions",
-      width: 180,
+      width: 110,
       renderCell: (params) => {
         return (
           <div>
@@ -122,12 +123,64 @@ export default function Master() {
       },
     },
     {
+      field: "old purchase price",
+      headerName: "Old Purchase Price",
+      width: 150,
+      renderCell: (params) => {
+        return (
+          <div>{params.row.main_item_pricing.pricing.old_purchase_price}</div>
+        );
+      },
+    },
+    {
       field: "purchase price",
       headerName: "Purchase Price",
       width: 150,
       renderCell: (params) => {
         return (
-          <div>{params.row.main_item_pricing.pricing.new_purchase_price}</div>
+          <div
+            style={{
+              width: "60%",
+              height: "60%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "10px",
+              boxShadow: isNowOrWithinThreeDays(
+                params.row.main_item_pricing.pricing.updated_at
+              )
+                ? "0px 0px 10px rgba(0, 0, 0, 0.25)"
+                : "",
+              background: isNowOrWithinThreeDays(
+                params.row.main_item_pricing.pricing.updated_at
+              )
+                ? "green"
+                : "",
+              color: isNowOrWithinThreeDays(
+                params.row.main_item_pricing.pricing.updated_at
+              )
+                ? "white"
+                : "",
+              fontWeight: isNowOrWithinThreeDays(
+                params.row.main_item_pricing.pricing.updated_at
+              )
+                ? 900
+                : "normal",
+            }}
+          >
+            {params.row.main_item_pricing.pricing.new_purchase_price}
+          </div>
+        );
+      },
+    },
+
+    {
+      field: "old selling price",
+      headerName: "Old Selling Price",
+      width: 150,
+      renderCell: (params) => {
+        return (
+          <div>{params.row.main_item_pricing.pricing.old_retail_price}</div>
         );
       },
     },
@@ -146,10 +199,15 @@ export default function Master() {
               justifyContent: "center",
               alignItems: "center",
               borderRadius: "10px",
+              boxShadow: isNowOrWithinThreeDays(
+                params.row.main_item_pricing.pricing.updated_at
+              )
+                ? "0px 0px 10px rgba(0, 0, 0, 0.25)"
+                : "",
               background: isNowOrWithinThreeDays(
                 params.row.main_item_pricing.pricing.updated_at
               )
-                ? "purple"
+                ? "red"
                 : "",
               color: isNowOrWithinThreeDays(
                 params.row.main_item_pricing.pricing.updated_at
@@ -170,13 +228,25 @@ export default function Master() {
     },
 
     {
-      field: "base_unit",
-      headerName: "Base Unit",
+      field: "valid_from",
+      headerName: "Valid From",
       width: 120,
-      renderCell: (params) => {
-        return <div>{params.row.base_unit.unit}</div>;
-      },
+      valueGetter: (params) =>
+        formatDate(
+          params.row.main_item_pricing.pricing.new_retail_price_valid_from
+        ),
     },
+
+    {
+      field: "valid_to",
+      headerName: "Valid To",
+      width: 120,
+      valueGetter: (params) =>
+        formatDate(
+          params.row.main_item_pricing.pricing.new_retail_price_valid_to
+        ),
+    },
+
     {
       field: "new_price",
       headerName: "New Price",
@@ -220,29 +290,29 @@ export default function Master() {
         );
       },
     },
-    {
-      field: "actions",
-      headerName: "Actions",
-      width: 100,
-      sortable: false,
-      renderCell: (params) => {
-        const handleActionClick = (event) => {
-          event.stopPropagation();
-          handleClickOpen();
-        };
-        return (
-          <div onClick={handleActionClick}>
-            <Button style={{ backgroundColor: "#04184B" }} variant="contained">
-              DETAILS
-            </Button>
-          </div>
-        );
-      },
-    },
+    // {
+    //   field: "actions",
+    //   headerName: "Actions",
+    //   width: 100,
+    //   sortable: false,
+    //   renderCell: (params) => {
+    //     const handleActionClick = (event) => {
+    //       event.stopPropagation();
+    //       handleClickOpen();
+    //     };
+    //     return (
+    //       <div onClick={handleActionClick}>
+    //         <Button style={{ backgroundColor: "#04184B" }} variant="contained">
+    //           DETAILS
+    //         </Button>
+    //       </div>
+    //     );
+    //   },
+    // },
   ];
 
   React.useEffect(() => {
-    fetch("http://localhost:3000/items")
+    fetch("http://0.0.0.0:3000/items")
       .then((res) => res.json())
       .then((data) => {
         setRow(data["data"]);

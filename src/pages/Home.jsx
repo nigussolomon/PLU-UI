@@ -29,22 +29,19 @@ export default function Home({ source, setSource }) {
   const [row, setRow] = React.useState([]);
   const [docId, setDocId] = React.useState();
   const [supplierFilter, setSupplierFilter] = React.useState();
-  const [statusFilter, setStatusFilter] = React.useState();
+  const [statusFilter, setStatusFilter] = React.useState("pending");
   const [suppliers, setSuppliers] = React.useState([]);
-  const [tmpList, setTempList] = React.useState([]);
   const [filteredRows, setFilteredRows] = React.useState([]);
 
   // use the built in react useeffect function to fetch supplier documnets from localhost:3000/supplier_documents
   React.useEffect(() => {
-    fetch("http://localhost:3000/supplier_documents")
+    fetch("http://0.0.0.0:3000/supplier_documents")
       .then((res) => res.json())
       .then((data) => {
         setRow(data["data"]);
-        console.log(data);
-        setTempList(data["data"]);
       });
 
-    fetch("http://localhost:3000/suppliers")
+    fetch("http://0.0.0.0:3000/suppliers")
       .then((res) => res.json())
       .then((data) => {
         setSuppliers(data["data"]);
@@ -52,7 +49,7 @@ export default function Home({ source, setSource }) {
   }, []);
 
   const fetchSDItems = (id) => {
-    fetch("http://localhost:3000/supplier_documents/" + id)
+    fetch("http://0.0.0.0:3000/supplier_documents/" + id)
       .then((res) => res.json())
       .then((data) => {
         setDummyRow(data["data"]);
@@ -60,9 +57,8 @@ export default function Home({ source, setSource }) {
   };
 
   React.useEffect(() => {
-    // Helper function to filter rows based on supplier ID and status
     const filterRows = () => {
-      let filteredData = tmpList;
+      let filteredData = row;
 
       if (supplierFilter) {
         filteredData = filteredData.filter(
@@ -77,10 +73,17 @@ export default function Home({ source, setSource }) {
       }
 
       setFilteredRows(filteredData);
+      return filteredData;
     };
 
     filterRows();
-  }, [supplierFilter, statusFilter, tmpList]);
+    console.log(filterRows());
+    if (row.length !== 0 && filterRows().length === 0) {
+      setSeverity("info");
+      setMessage(`No ${statusFilter}  documents found`);
+      setOpenSnackBar(true);
+    }
+  }, [supplierFilter, statusFilter, row]);
 
   const handleClickOpen = () => {
     setOpen(true);

@@ -6,6 +6,7 @@ import Slide from "@mui/material/Slide";
 import Button from "@mui/material/Button";
 import { DataGrid } from "@mui/x-data-grid";
 import DialogActions from "@mui/material/DialogActions";
+import { useNavigate } from "react-router-dom";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -29,8 +30,10 @@ export default function Details({
   setSeverity,
   setMessage,
 }) {
+  const navigate = useNavigate();
+
   const updateRec = (status) => {
-    fetch("http://localhost:3000/supplier_documents/" + docId, {
+    fetch("http://0.0.0.0:3000/supplier_documents/" + docId, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -46,7 +49,7 @@ export default function Details({
         setSeverity(status === "approved" ? "success" : "info");
         setMessage(`${curRef} ${status} Successfully!`);
         setOpenSnackBar(true);
-        window.location.reload(false)
+        status === "approved" ? navigate("/master") : window.location.reload(false);
       });
   };
 
@@ -181,7 +184,7 @@ export default function Details({
               setSeverity("error");
               setMessage("Items have been archived!");
               setOpenSnackBar(true);
-              window.location.reload(false)
+              window.location.reload(false);
             }}
             style={{ padding: ".5%", paddingInline: "2.5%" }}
             color="error"
