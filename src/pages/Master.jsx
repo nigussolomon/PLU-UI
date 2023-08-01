@@ -105,7 +105,7 @@ export default function Master() {
     { field: "id", headerName: "No", width: 70 },
     { field: "item_code", headerName: "Item Code", width: 110 },
     { field: "decor_code", headerName: "Decor Code", width: 110 },
-    { field: "item_description", headerName: "Item Description", width: 280 },
+    { field: "item_description", headerName: "Item Description", width: 410 },
     {
       field: "dimensions",
       headerName: "Dimensions",

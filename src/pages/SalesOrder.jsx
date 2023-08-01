@@ -20,43 +20,81 @@ export default function SalesOrder() {
   const [actions, setActions] = useState(true);
   const [visible, setVisible] = useState("none");
   const [addPutButt, setAddPutButt] = useState(false);
+  const [headers, setHeaders] = useState({});
 
   const columns = [
     { field: "ItemCode", headerName: "Item Code", width: 150 },
-    { field: "ItemName", headerName: "Item Name", width: 250 },
-    { field: "GeneralSpec", headerName: "General Spec", width: 250 },
+    {
+      field: "ItemName",
+      headerName: "Item",
+      width: 550,
+      renderCell: (params) => {
+        return (
+          <div
+            className="item"
+            style={{
+              width: "100%",
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+              wordWrap: "break-word",
+              whiteSpace: "normal",
+              paddingRight: "20px",
+            }}
+          >
+            {params.row.GeneralSpec
+              ? params.row.ItemName + params.row.GeneralSpec
+              : params.row.ItemName}
+          </div>
+        );
+      },
+    },
     { field: "QuantityOrdered", headerName: "Quantity Ordered", width: 180 },
     { field: "UnitPrice", headerName: "Unit Price", width: 150 },
     { field: "TotalPrice", headerName: "Total Price", width: 150 },
   ];
 
   const columns2 = [
-    { field: "so_ref", headerName: "Sales Order Reference", width: 550 },
+    { field: "so_ref", headerName: "Order Reference", width: 550 },
     { field: "so_created", headerName: "Date", width: 550 },
     { field: "status", headerName: "Status", width: 350 },
     {
-      field: "details",
-      headerName: "Details",
+      field: "actions",
+      headerName: "Actions",
       width: 250,
       renderCell: (params) => {
         const handleActionClick = async (event) => {
           await event.stopPropagation();
           await setAddPutButt(true);
           await setCode(params.row.so_ref);
-          fetchSOItems();
+          fetchSOItems(params.row.so_ref);
         };
         return (
-          <Button
-            onClick={handleActionClick}
-            disabled={loading}
-            variant={
-              params.row.status === "Approved" ? "outlined" : "contained"
-            }
-            size="small"
-            color={params.row.status === "Approved" ? "success" : "primary"}
+          <div
+            className="actions"
+            style={{ display: "flex", justifyContent: "space-between" }}
           >
-            Details
-          </Button>
+            <Button
+              onClick={handleActionClick}
+              disabled={loading}
+              variant={
+                params.row.status === "confirmed" ? "outlined" : "contained"
+              }
+              size="small"
+              color={params.row.status === "confirmed" ? "success" : "primary"}
+            >
+              Details
+            </Button>
+            <div className="space" style={{ width: "15px" }}></div>
+            <Button
+              onClick={handleActionClick}
+              disabled={loading}
+              variant="contained"
+              size="small"
+              color="secondary"
+            >
+              SEND ORDER
+            </Button>
+          </div>
         );
       },
     },
@@ -66,15 +104,13 @@ export default function SalesOrder() {
     setSelectedRow(params.row);
   };
 
-  const handleCloseDialog = () => {
-    setSelectedRow(null);
-  };
-
-  const fetchSOItems = async () => {
+  const fetchSOItems = async (id) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://0.0.0.0:8000/so_items?po_login_code=${code}&user_full_name=maveko_plu_module}`,
+        `http://localhost:8000/so_items?po_login_code=${
+          id ? id : code
+        }&user_full_name=maveko_plu_module}`,
         {
           method: "GET",
           headers: {
@@ -85,15 +121,18 @@ export default function SalesOrder() {
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
-      } else {
-        setLoading(false);
-        setActions(false);
       }
 
       const data = await response.json();
-      const rowsWithId = data.map((row) => ({ ...row, id: row.LineNumber }));
-      setRows(rowsWithId);
+      const rowsWithId = data["details"].map((row) => ({
+        ...row,
+        id: row.LineNumber,
+      }));
+      await setRows(rowsWithId);
+      await setHeaders(data["header"]["__values__"]);
       setVisible("block");
+      setLoading(false);
+      setActions(false);
     } catch (error) {
       console.error("Error fetching data:", error);
       setLoading(false);
@@ -107,7 +146,7 @@ export default function SalesOrder() {
       <div className="head" style={{ margin: "4.5vw" }}>
         <div className="so">
           <Typography style={{ marginTop: "1.5%" }} variant="h4">
-            Sales Order Listing
+            Order Listing
           </Typography>
           <br />
           <div
@@ -116,7 +155,7 @@ export default function SalesOrder() {
           >
             <TextField
               variant="outlined"
-              label="Sales Order Number"
+              label="Order Number"
               style={{ width: "25%" }}
               value={code}
               onChange={(e) => {
@@ -127,19 +166,27 @@ export default function SalesOrder() {
             />
             <LoadingButton
               disabled={disabled}
-              onClick={fetchSOItems}
+              onClick={() => {
+                fetchSOItems(code);
+              }}
               loading={loading}
               loadingPosition="start"
               style={{ marginLeft: "1%", paddingInline: "2%" }}
               startIcon={<GetAppIcon />}
               variant="contained"
             >
-              CAPTURE SO
+              CAPTURE ORDER
             </LoadingButton>
           </div>
         </div>
         <br />
-        <div style={{ height: "fit-content", width: "100%" }}>
+        <div
+          style={{
+            height: "fit-content",
+            width: "100%",
+            display: visible === "none" ? "block" : "none",
+          }}
+        >
           <DataGrid
             sx={{
               "& .MuiDataGrid-columnHeaders": {
@@ -160,7 +207,64 @@ export default function SalesOrder() {
             }}
           />
         </div>
-        <br />
+        <div className="headerDetails">
+          <div className="po" style={{ display: visible }}>
+            <Divider />
+            <h2 style={{ lineHeight: 0.5 }}>{headers.PONumber}</h2>
+            <Divider />
+            <br />
+            <div
+              className="data"
+              style={{
+                display: "flex",
+                justifyContent: "flex-start",
+                flexDirection: "row",
+              }}
+            >
+              {[
+                { label: "From", value: headers.POSentByPersonCompany },
+                {
+                  label: "Final Delivery",
+                  value:
+                    headers.DeliveryDateToDestination +
+                    " | " +
+                    headers.DestinationDeliveryPlace,
+                },
+                { label: "Payment Terms", value: headers.PaymentTerms },
+                { label: "Date of Order", value: headers.POSentDate },
+                { label: "Requested By", value: headers.POSentByPerson },
+                {
+                  label: "For",
+                  value:
+                    headers.PODestinationName + " | " + headers.DocDeptName,
+                },
+              ].map((item, index) => (
+                <h3
+                  key={index}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    lineHeight: "20px",
+                    paddingTop: 0,
+                    marginTop: 0,
+                    marginBottom: 0,
+                    marginRight: "20px",
+                    borderLeft: "2px solid #000",
+                    paddingLeft: "10px",
+                  }}
+                >
+                  {item.label}{" "}
+                  <span style={{ fontSize: "15px", fontWeight: 400 }}>
+                    {item.value}
+                  </span>
+                </h3>
+              ))}
+            </div>
+            <br />
+            <Divider />
+            <br />
+          </div>
+        </div>
         <div style={{ height: "fit-content", width: "100%", display: visible }}>
           <DataGrid
             sx={{
@@ -198,55 +302,33 @@ export default function SalesOrder() {
             >
               Cancel
             </Button>
-            <div className="space" style={{ width: "1%" }}></div>
-            {addPutButt ? (
-              <Button
-                onClick={() => {
-                  setVisible("none");
-                }}
-                disabled={actions}
-                variant="contained"
-                color="success"
-                style={{ padding: ".6%", paddingInline: "3%" }}
-              >
-                ADJUST PRICE
-              </Button>
-            ) : (
-              <Button
-                onClick={() => {
-                  setVisible("none");
-                }}
-                disabled={actions}
-                variant="contained"
-                color="success"
-                style={{ padding: ".6%", paddingInline: "3%" }}
-              >
-                Save Order
-              </Button>
-            )}
+            <div className="space" style={{ width: "10px" }}></div>
+
+            <Button
+              onClick={() => {
+                setVisible("none");
+              }}
+              disabled={actions}
+              variant="contained"
+              color="secondary"
+              style={{ padding: ".6%", paddingInline: "3%" }}
+            >
+              INPUT ORDER INFORMATION
+            </Button>
+            <div className="space" style={{ width: "10px" }}></div>
+            <Button
+              onClick={() => {
+                setVisible("none");
+              }}
+              disabled={actions}
+              variant="contained"
+              color="success"
+              style={{ padding: ".6%", paddingInline: "3%" }}
+            >
+              COMPLETE DOCUMENT
+            </Button>
           </div>
         </div>
-        <Dialog
-          open={selectedRow !== null}
-          onClose={handleCloseDialog}
-          maxWidth="sm"
-          fullWidth
-        >
-          <DialogContent>
-            {selectedRow && (
-              <>
-                <Typography variant="h4">Item Details</Typography>
-                <Typography variant="h6">{selectedRow.ItemCode}</Typography>
-                <Divider style={{ marginTop: "8px", marginBottom: "15px" }} />
-                <Typography>Item Name: {selectedRow.ItemName}</Typography>
-                <Typography>
-                  Quantity Ordered: {selectedRow.QuantityOrdered}
-                </Typography>
-                <Typography>Unit Price: {selectedRow.UnitPrice}</Typography>
-              </>
-            )}
-          </DialogContent>
-        </Dialog>
       </div>
     </>
   );

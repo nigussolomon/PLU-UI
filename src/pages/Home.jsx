@@ -38,13 +38,13 @@ export default function Home({ source, setSource }) {
     fetch("http://0.0.0.0:3000/supplier_documents")
       .then((res) => res.json())
       .then((data) => {
-        setRow(data["data"]);
+        setRow(data["data"].slice().reverse());
       });
 
     fetch("http://0.0.0.0:3000/suppliers")
       .then((res) => res.json())
       .then((data) => {
-        setSuppliers(data["data"]);
+        setSuppliers(data["data"].slice().reverse());
       });
   }, []);
 
@@ -52,7 +52,7 @@ export default function Home({ source, setSource }) {
     fetch("http://0.0.0.0:3000/supplier_documents/" + id)
       .then((res) => res.json())
       .then((data) => {
-        setDummyRow(data["data"]);
+        setDummyRow(data["data"].slice().reverse());
       });
   };
 
@@ -72,7 +72,7 @@ export default function Home({ source, setSource }) {
         );
       }
 
-      setFilteredRows(filteredData);
+      setFilteredRows(filteredData.slice().reverse());
       return filteredData;
     };
 
