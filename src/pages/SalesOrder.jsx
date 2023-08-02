@@ -21,6 +21,7 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -41,7 +42,17 @@ export default function SalesOrder() {
   const [rp, setRp] = React.useState("p1");
   const [cp, setCp] = React.useState("p1");
   const [title, setTitle] = React.useState("");
-  const [titleFocus, setTitleFocus] = React.useState(false);
+  const [titleFocus, setTitleFocus] = React.useState(true);
+  const [data, setData] = React.useState([]);
+  const [mockDis, setMockDis] = React.useState(false)
+
+  function parseDateForMuiDatePicker(dateString) {
+    const dateParts = dateString.split("-");
+    const day = parseInt(dateParts[0], 10);
+    const month = dateParts[1];
+    const year = parseInt(dateParts[2], 10);
+    return new Date(`${month} ${day}, ${year}`);
+  }
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -94,6 +105,7 @@ export default function SalesOrder() {
         const handleActionClick = async (event) => {
           await event.stopPropagation();
           await setCode(params.row.so_ref);
+          setActions(false);
           fetchSOItems(params.row.so_ref);
         };
         return (
@@ -224,7 +236,7 @@ export default function SalesOrder() {
                 stroke: "white",
               },
             }}
-            rows={rows4}
+            rows={data}
             columns={columns2}
             loading={loading}
             onRowClick={handleDetailsClick}
@@ -339,9 +351,20 @@ export default function SalesOrder() {
               disabled={actions}
               variant="contained"
               color="secondary"
-              style={{ padding: ".6%", paddingInline: "3%" }}
+              style={{ padding: ".6%", paddingInline: "3%", display: data.length === 0 ? "block" : "none" }}
             >
               INPUT ORDER INFORMATION
+            </Button>
+            <Button
+              onClick={() => {
+                setOpenForm(true);
+              }}
+              disabled={actions}
+              variant="contained"
+              color="secondary"
+              style={{ padding: ".6%", paddingInline: "3%", display: data.length === 0 ? "none" : "block" }}
+            >
+              ORDER INFORMATION
             </Button>
             <div className="space" style={{ width: "10px" }}></div>
             <Button
@@ -438,7 +461,7 @@ export default function SalesOrder() {
                   ></TextField>
                   <TextField
                     focused={titleFocus}
-                    value={title}
+                    value={headers.PODescription}
                     onChange={(e) => {
                       setTitle(e.target.value);
                       setTitleFocus(true);
@@ -556,6 +579,8 @@ export default function SalesOrder() {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={["DatePicker"]}>
                       <DatePicker
+                        focused
+                        defaultValue={dayjs(headers.POSentDate)}
                         sx={{
                           width: "350px",
                           marginRight: "20px",
@@ -567,6 +592,8 @@ export default function SalesOrder() {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={["DatePicker"]}>
                       <DatePicker
+                        focused
+                        defaultValue={dayjs(headers.DeliveryDateToDestination)}
                         sx={{
                           width: "350px",
                           marginRight: "20px",
@@ -578,6 +605,8 @@ export default function SalesOrder() {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={["DatePicker"]}>
                       <DatePicker
+                        focused
+                        defaultValue={dayjs(headers.POSentDate)}
                         sx={{
                           width: "350px",
                           marginRight: "20px",
@@ -636,7 +665,7 @@ export default function SalesOrder() {
                   ></TextField>
                   <TextField
                     focused={titleFocus}
-                    value={title}
+                    value={headers.PODescription}
                     onChange={(e) => {
                       setTitle(e.target.value);
                       setTitleFocus(true);
@@ -735,7 +764,7 @@ export default function SalesOrder() {
                   ></TextField>
                   <TextField
                     focused={titleFocus}
-                    value={title}
+                    value={headers.PODescription}
                     onChange={(e) => {
                       setTitle(e.target.value);
                       setTitleFocus(true);
@@ -905,7 +934,194 @@ export default function SalesOrder() {
               </div>
               <br />
             </TabPanel>
-            <TabPanel value="3">Item Three</TabPanel>
+            <TabPanel value="3">
+              <h2 style={{ lineHeight: 0.5 }}>AES - Customs Information</h2>
+              <Divider></Divider>
+              <br />
+              <div
+                className="customerInfo"
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  flexWrap: "wrap",
+                }}
+              >
+                <TextField
+                  select
+                  style={{
+                    width: "450px",
+                    marginBottom: "20px",
+                    marginRight: "20px",
+                  }}
+                  variant="outlined"
+                  label="Designated Eyes"
+                >
+                  <MenuItem key="c1" value="c1">
+                    {"Zollamt Rotterdam"}
+                  </MenuItem>
+                  <MenuItem key="c2" value="c2">
+                    {"Zollamt Venedig"}
+                  </MenuItem>
+                </TextField>
+                <TextField
+                  value="0000 / Anmelder ist Ausführer"
+                  focused
+                  style={{
+                    width: "450px",
+                    marginBottom: "20px",
+                    marginRight: "20px",
+                  }}
+                  variant="outlined"
+                  label="Involved Parties"
+                ></TextField>
+                <TextField
+                  select
+                  style={{
+                    width: "450px",
+                    marginBottom: "20px",
+                    marginRight: "20px",
+                  }}
+                  variant="outlined"
+                  label="Destination Country"
+                >
+                  <MenuItem key="d1" value="d1">
+                    {"QQ – Schiffs-und Luftfahrzeugbedarf"}
+                  </MenuItem>
+                  <MenuItem key="d2" value="d2">
+                    {"QS – Schiffs-und Luftfahrzeugbedarf"}
+                  </MenuItem>
+                  <MenuItem key="d3" value="d3">
+                    {"QR – Schiffs-und Luftfahrzeugbedarf"}
+                  </MenuItem>
+                </TextField>
+                <TextField
+                  value="3 / Strabenverkehr"
+                  focused
+                  style={{
+                    width: "400px",
+                    marginBottom: "20px",
+                    marginRight: "20px",
+                  }}
+                  variant="outlined"
+                  label="Transportation Mode I"
+                ></TextField>
+                <TextField
+                  focused
+                  value="1 / Seeverkehr"
+                  style={{
+                    width: "350px",
+                    marginBottom: "20px",
+                    marginRight: "20px",
+                  }}
+                  variant="outlined"
+                  label="Transportation Mode A"
+                ></TextField>
+                <TextField
+                  focused
+                  value="EXW / Ab Werk"
+                  style={{
+                    width: "450px",
+                    marginBottom: "20px",
+                    marginRight: "20px",
+                  }}
+                  variant="outlined"
+                  label="Delivery Condition Code"
+                ></TextField>
+                <TextField
+                  focused
+                  value="10 see Schiff"
+                  style={{
+                    width: "350px",
+                    marginBottom: "20px",
+                    marginRight: "20px",
+                  }}
+                  variant="outlined"
+                  label="Transportation to Border Point"
+                ></TextField>
+                <TextField
+                  focused
+                  value="UNBEKANNT"
+                  style={{
+                    width: "380px",
+                    marginBottom: "20px",
+                    marginRight: "20px",
+                  }}
+                  variant="outlined"
+                  label="Registration Number"
+                ></TextField>
+                <TextField
+                  focused
+                  value="30 / Registration Number of the road vehicle"
+                  style={{
+                    width: "380px",
+                    marginBottom: "20px",
+                    marginRight: "20px",
+                  }}
+                  label="Type"
+                ></TextField>
+              </div>
+              <br />
+              <div
+                className="route"
+                style={{
+                  paddingTop: "15px",
+                  border: "1px solid #1976d2",
+                  paddingInline: "20px",
+                  borderRadius: "5px",
+                }}
+              >
+                <h3 style={{ lineHeight: 0.5, marginTop: 0, marginBottom: 0 }}>
+                  Transport Route
+                </h3>
+                <div className="fields" style={{ display: "flex" }}>
+                  <TextField
+                    select
+                    style={{
+                      width: "250px",
+                      marginBottom: "20px",
+                      marginRight: "30px",
+                      marginTop: "25px",
+                    }}
+                    variant="outlined"
+                    label="Origin"
+                  >
+                    <MenuItem key="dod1" value="dod1">
+                      {"DE | Deutschland"}
+                    </MenuItem>
+                  </TextField>
+                  <TextField
+                    select
+                    style={{
+                      width: "250px",
+                      marginBottom: "20px",
+                      marginRight: "30px",
+                      marginTop: "25px",
+                    }}
+                    variant="outlined"
+                    label="Transit"
+                  >
+                    <MenuItem key="de1" value="de1">
+                      {"NO | Norwegen"}
+                    </MenuItem>
+                  </TextField>
+                  <TextField
+                    select
+                    style={{
+                      width: "250px",
+                      marginBottom: "20px",
+                      marginRight: "30px",
+                      marginTop: "25px",
+                    }}
+                    variant="outlined"
+                    label="Destination"
+                  >
+                    <MenuItem key="dd1" value="dd1">
+                      {"CA | Kanada"}
+                    </MenuItem>
+                  </TextField>
+                </div>
+              </div>
+            </TabPanel>
           </TabContext>
           <Divider></Divider>
           <div
@@ -931,7 +1147,20 @@ export default function SalesOrder() {
               HIDE
             </Button>
             <Button
-              disabled
+              onClick={() => {
+                setData([
+                  {
+                    id: 1,
+                    so_ref: "8C03CE1E83C24D3B8ED6159CA0D8CE4D",
+                    status: "pending",
+                    so_created: "2023-07-27",
+                  },
+                ]);
+                setVisible("none");
+                setLoading(false);
+                setActions(false);
+                setOpenForm(!openForm);
+              }}
               variant="contained"
               color="success"
               style={{
