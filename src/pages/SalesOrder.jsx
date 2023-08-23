@@ -44,7 +44,7 @@ export default function SalesOrder() {
   const [title, setTitle] = React.useState("");
   const [titleFocus, setTitleFocus] = React.useState(true);
   const [data, setData] = React.useState([]);
-  const [mockDis, setMockDis] = React.useState(false)
+  const [newDis, setNewDis] = React.useState(false)
 
   function parseDateForMuiDatePicker(dateString) {
     const dateParts = dateString.split("-");
@@ -89,6 +89,7 @@ export default function SalesOrder() {
       },
     },
     { field: "QuantityOrdered", headerName: "Quantity Ordered", width: 180 },
+    { field: "UOM", headerName: "Ordered Unit", width: 180 },
     { field: "UnitPrice", headerName: "Unit Price", width: 150 },
     { field: "TotalPrice", headerName: "Total Price", width: 150 },
   ];
@@ -357,6 +358,7 @@ export default function SalesOrder() {
             </Button>
             <Button
               onClick={() => {
+                setNewDis(true)
                 setOpenForm(true);
               }}
               disabled={actions}
@@ -449,6 +451,7 @@ export default function SalesOrder() {
                   }}
                 >
                   <TextField
+                    disabled={newDis}
                     style={{
                       width: "450px",
                       marginBottom: "20px",
@@ -460,6 +463,7 @@ export default function SalesOrder() {
                     label="Customer"
                   ></TextField>
                   <TextField
+                    disabled={newDis}
                     focused={titleFocus}
                     value={headers.PODescription}
                     onChange={(e) => {
@@ -475,6 +479,7 @@ export default function SalesOrder() {
                     label="Title"
                   ></TextField>
                   <TextField
+                    disabled={newDis}
                     style={{
                       width: "350px",
                       marginBottom: "20px",
@@ -486,6 +491,7 @@ export default function SalesOrder() {
                     label="Name"
                   ></TextField>
                   <TextField
+                    disabled={newDis}
                     select
                     focused
                     value={cp}
@@ -509,6 +515,7 @@ export default function SalesOrder() {
                     </MenuItem>
                   </TextField>
                   <TextField
+                    disabled={newDis}
                     style={{
                       width: "350px",
                       marginBottom: "20px",
@@ -520,6 +527,7 @@ export default function SalesOrder() {
                     label="Street"
                   ></TextField>
                   <TextField
+                    disabled={newDis}
                     style={{
                       width: "180px",
                       marginBottom: "20px",
@@ -531,6 +539,7 @@ export default function SalesOrder() {
                     label="City"
                   ></TextField>
                   <TextField
+                    disabled={newDis}
                     style={{
                       width: "580px",
                       marginBottom: "20px",
@@ -560,6 +569,7 @@ export default function SalesOrder() {
                   }}
                 >
                   <TextField
+                    disabled={newDis}
                     select
                     focused
                     value={rp}
@@ -579,6 +589,7 @@ export default function SalesOrder() {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={["DatePicker"]}>
                       <DatePicker
+                        disabled={newDis}
                         focused
                         defaultValue={dayjs(headers.POSentDate)}
                         sx={{
@@ -592,6 +603,7 @@ export default function SalesOrder() {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={["DatePicker"]}>
                       <DatePicker
+                        disabled={newDis}
                         focused
                         defaultValue={dayjs(headers.DeliveryDateToDestination)}
                         sx={{
@@ -605,6 +617,7 @@ export default function SalesOrder() {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={["DatePicker"]}>
                       <DatePicker
+                        disabled={newDis}
                         focused
                         defaultValue={dayjs(headers.POSentDate)}
                         sx={{
@@ -616,6 +629,7 @@ export default function SalesOrder() {
                     </DemoContainer>
                   </LocalizationProvider>
                   <TextField
+                    disabled={newDis}
                     style={{
                       width: "280px",
                       marginBottom: "20px",
@@ -628,6 +642,7 @@ export default function SalesOrder() {
                     label="Terms"
                   ></TextField>
                   <TextField
+                    disabled={newDis}
                     label="Process Matchcode"
                     style={{
                       width: "280px",
@@ -653,6 +668,7 @@ export default function SalesOrder() {
                   }}
                 >
                   <TextField
+                    disabled={newDis}
                     value={headers.DeliveryAddress1}
                     focused
                     style={{
@@ -664,6 +680,7 @@ export default function SalesOrder() {
                     label="Delivery Address"
                   ></TextField>
                   <TextField
+                    disabled={newDis}
                     focused={titleFocus}
                     value={headers.PODescription}
                     onChange={(e) => {
@@ -679,6 +696,7 @@ export default function SalesOrder() {
                     label="Title"
                   ></TextField>
                   <TextField
+                    disabled={newDis}
                     focused
                     value={headers.POSentByPersonCompany}
                     style={{
@@ -690,6 +708,7 @@ export default function SalesOrder() {
                     label="Name"
                   ></TextField>
                   <TextField
+                    disabled={newDis}
                     select
                     focused
                     value={cp}
@@ -712,6 +731,7 @@ export default function SalesOrder() {
                     </MenuItem>
                   </TextField>
                   <TextField
+                    disabled={newDis}
                     style={{
                       width: "180px",
                       marginBottom: "20px",
@@ -723,6 +743,7 @@ export default function SalesOrder() {
                     label="City"
                   ></TextField>
                   <TextField
+                    disabled={newDis}
                     style={{
                       width: "580px",
                       marginBottom: "20px",
@@ -752,6 +773,7 @@ export default function SalesOrder() {
                   }}
                 >
                   <TextField
+                    disabled={newDis}
                     focused
                     value={headers.POSentByPersonCompany}
                     style={{
@@ -763,6 +785,7 @@ export default function SalesOrder() {
                     label="Invoice Address"
                   ></TextField>
                   <TextField
+                    disabled={newDis}
                     focused={titleFocus}
                     value={headers.PODescription}
                     onChange={(e) => {
@@ -778,6 +801,7 @@ export default function SalesOrder() {
                     label="Title"
                   ></TextField>
                   <TextField
+                    disabled={newDis}
                     focused
                     value={headers.POSentByPersonCompany}
                     style={{
@@ -789,6 +813,7 @@ export default function SalesOrder() {
                     label="Name"
                   ></TextField>
                   <TextField
+                    disabled={newDis}
                     select
                     focused
                     value={cp}
@@ -811,6 +836,7 @@ export default function SalesOrder() {
                     </MenuItem>
                   </TextField>
                   <TextField
+                    disabled={newDis}
                     style={{
                       width: "180px",
                       marginBottom: "20px",
@@ -822,6 +848,7 @@ export default function SalesOrder() {
                     label="City"
                   ></TextField>
                   <TextField
+                    disabled={newDis}
                     style={{
                       width: "580px",
                       marginBottom: "20px",
@@ -852,6 +879,7 @@ export default function SalesOrder() {
                 }}
               >
                 <TextField
+                  disabled={newDis}
                   value={headers.PONumber}
                   focused
                   style={{
@@ -863,6 +891,7 @@ export default function SalesOrder() {
                   label="PO-No"
                 ></TextField>
                 <TextField
+                  disabled={newDis}
                   value={headers.PODestinationName}
                   focused
                   style={{
@@ -874,6 +903,7 @@ export default function SalesOrder() {
                   label="Name of Ship"
                 ></TextField>
                 <TextField
+                  disabled={newDis}
                   style={{
                     width: "350px",
                     marginBottom: "20px",
@@ -883,6 +913,7 @@ export default function SalesOrder() {
                   label="Ship Number"
                 ></TextField>
                 <TextField
+                  disabled={newDis}
                   focused
                   value={headers.DeliveryAddress1}
                   style={{
@@ -894,6 +925,7 @@ export default function SalesOrder() {
                   label="Delivery Address"
                 ></TextField>
                 <TextField
+                  disabled={newDis}
                   focused
                   value={
                     headers.DeliveryDateToDestination +
@@ -909,6 +941,7 @@ export default function SalesOrder() {
                   label="Final Delivery"
                 ></TextField>
                 <TextField
+                  disabled={newDis}
                   style={{
                     width: "380px",
                     marginBottom: "20px",
@@ -918,6 +951,7 @@ export default function SalesOrder() {
                   label="Voyage Number"
                 ></TextField>
                 <TextField
+                  disabled={newDis}
                   select
                   value="t1"
                   style={{
@@ -947,6 +981,7 @@ export default function SalesOrder() {
                 }}
               >
                 <TextField
+                  disabled={newDis}
                   select
                   style={{
                     width: "450px",
@@ -964,6 +999,7 @@ export default function SalesOrder() {
                   </MenuItem>
                 </TextField>
                 <TextField
+                  disabled={newDis}
                   value="0000 / Anmelder ist Ausführer"
                   focused
                   style={{
@@ -975,6 +1011,7 @@ export default function SalesOrder() {
                   label="Involved Parties"
                 ></TextField>
                 <TextField
+                  disabled={newDis}
                   select
                   style={{
                     width: "450px",
@@ -995,6 +1032,7 @@ export default function SalesOrder() {
                   </MenuItem>
                 </TextField>
                 <TextField
+                  disabled={newDis}
                   value="3 / Strabenverkehr"
                   focused
                   style={{
@@ -1006,6 +1044,7 @@ export default function SalesOrder() {
                   label="Transportation Mode I"
                 ></TextField>
                 <TextField
+                  disabled={newDis}
                   focused
                   value="1 / Seeverkehr"
                   style={{
@@ -1017,6 +1056,7 @@ export default function SalesOrder() {
                   label="Transportation Mode A"
                 ></TextField>
                 <TextField
+                  disabled={newDis}
                   focused
                   value="EXW / Ab Werk"
                   style={{
@@ -1028,6 +1068,7 @@ export default function SalesOrder() {
                   label="Delivery Condition Code"
                 ></TextField>
                 <TextField
+                  disabled={newDis}
                   focused
                   value="10 see Schiff"
                   style={{
@@ -1039,6 +1080,7 @@ export default function SalesOrder() {
                   label="Transportation to Border Point"
                 ></TextField>
                 <TextField
+                  disabled={newDis}
                   focused
                   value="UNBEKANNT"
                   style={{
@@ -1050,6 +1092,7 @@ export default function SalesOrder() {
                   label="Registration Number"
                 ></TextField>
                 <TextField
+                  disabled={newDis}
                   focused
                   value="30 / Registration Number of the road vehicle"
                   style={{
@@ -1075,6 +1118,7 @@ export default function SalesOrder() {
                 </h3>
                 <div className="fields" style={{ display: "flex" }}>
                   <TextField
+                    disabled={newDis}
                     select
                     style={{
                       width: "250px",
@@ -1090,6 +1134,7 @@ export default function SalesOrder() {
                     </MenuItem>
                   </TextField>
                   <TextField
+                    disabled={newDis}
                     select
                     style={{
                       width: "250px",
@@ -1105,6 +1150,7 @@ export default function SalesOrder() {
                     </MenuItem>
                   </TextField>
                   <TextField
+                    disabled={newDis}
                     select
                     style={{
                       width: "250px",
@@ -1147,6 +1193,7 @@ export default function SalesOrder() {
               HIDE
             </Button>
             <Button
+              disabled={newDis}
               onClick={() => {
                 setData([
                   {
